@@ -2,6 +2,8 @@ import pygame
 import sys
 import RPi.GPIO as GPIO
 import subprocess
+import settings
+import json
 
 # Colors
 BACKGROUND_COLOR = (30, 30, 30)
@@ -21,10 +23,20 @@ pygame.display.set_caption("Car Dashboard")
 font_large = pygame.font.Font(None, 48)
 font_small = pygame.font.Font(None, 36)
 
+settings_json = None
+
 # Gets called once
 def setup():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(3, GPIO.IN)
+
+    load_json()
+
+def load_json():
+    global settings_json, wait_time
+    # read json
+    with open("settings.json", "r") as file:
+        settings_json = json.load(file)
 
 # Function to draw dashboard
 def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
@@ -40,6 +52,10 @@ def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
     about_text = font_small.render("About", True, BUTTON_TEXT_COLOR)
     text_rect = about_text.get_rect(center=about_button_rect.center)
     screen.blit(about_text, text_rect)
+
+    # Version label
+    version_text = font_small.render("Version: 0.0.1", True, TEXT_COLOR)
+    screen.blit(version_text, (WIDTH // 2 - version_text.get_width() // 2, 550))
     
     # Throttle
     throttle_label = font_small.render("Throttle", True, TEXT_COLOR)
@@ -92,8 +108,10 @@ def apple_carplay():
     subprocess.run('./Carplay.AppImage', shell=True, executable="/bin/bash")
 
 # Function for Settings action
-def settings():
+def settings_pressed():
     print("Settings activated!")
+    settings.settings_menu(screen)
+    load_json()
 
 # Function for About action
 def about():
@@ -101,6 +119,7 @@ def about():
 
 # Main loop
 def main():
+    global wait_time
     setup()
 
     throttle = 50  # Throttle percentage
@@ -112,7 +131,8 @@ def main():
     running = True
     
     # Set display mode to fullscreen
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    if sys.argv[1] == "fullscreen":
+        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     while running:
         for event in pygame.event.get():
@@ -124,7 +144,7 @@ def main():
                     apple_carplay()
                 # Check if the mouse click is within the Settings button area
                 elif WIDTH - 50 - 200 <= event.pos[0] <= WIDTH - 50 and 500 <= event.pos[1] <= 500 + 50:
-                    settings()
+                    settings_pressed()
                 # Check if the mouse click is within the About button area
                 elif WIDTH - 150 <= event.pos[0] <= WIDTH - 50 and 50 <= event.pos[1] <= 50 + 30:
                     about()
@@ -141,7 +161,7 @@ def main():
             speed = 0
         clutch_pressed = GPIO.input(3)
         
-        clock.tick(10)  # Limit frame rate
+        clock.tick(int(settings_json["fps"]))  # Limit frame rate
         
     pygame.quit()
     sys.exit()
