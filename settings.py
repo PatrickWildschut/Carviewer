@@ -2,25 +2,18 @@ import pygame
 import sys
 import json
 
-# Colors
-BACKGROUND_COLOR = (30, 30, 30)
-TEXT_COLOR = (255, 255, 255)
-BUTTON_COLOR = (50, 50, 50)
-BUTTON_TEXT_COLOR = (255, 255, 255)
-
-# Fonts
 pygame.init()  # Initialize Pygame
-font_large = pygame.font.Font(None, 48)
-font_small = pygame.font.Font(None, 36)
+from Carviewer_global import *
+
 
 def get_json_fps():
     # read json
     with open("settings.json", "r") as file:
         settings_json = json.load(file)
 
-    return settings_json["fps"]
+    return settings_json["Program"]["fps"]
 
-def settings_menu(screen):
+def settings_menu():
     running = True
     fps_options = [20, 30, 40, 50, 60]
     selected_fps = get_json_fps()
@@ -69,7 +62,7 @@ def update_json(fps):
     with open("settings.json", "r") as file:
         settings_data = json.load(file)
 
-    settings_data["fps"] = fps
+    settings_data["Program"]["fps"] = fps
 
     with open("settings.json", "w") as file:
         json.dump(settings_data, file, indent=4)
