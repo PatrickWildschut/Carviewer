@@ -9,6 +9,7 @@ from ADCDACPi import ADCDACPi
 from Carviewer_global import *
 
 settings_json = None
+open_carplay = False
 
 def read_menu():
     global settings_json
@@ -64,6 +65,8 @@ def read_menu():
 
 # Function to draw dashboard
 def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
+    global open_carplay
+
     screen.fill(BACKGROUND_COLOR)
     
     # Title
@@ -78,7 +81,13 @@ def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
     screen.blit(about_text, text_rect)
 
     # Version label
-    version_text = font_small.render(f"Version: {settings_json['Program']['version']}", True, TEXT_COLOR)
+    version_text = ''
+
+    if open_carplay == True:
+        version_text = font_small.render("Opening Apple Carplay...", True, TEXT_COLOR)
+    else:
+        version_text = font_small.render(f"Version: {settings_json['Program']['version']}", True, TEXT_COLOR)
+    
     screen.blit(version_text, (WIDTH // 2 - version_text.get_width() // 2, 550))
     
     # Throttle
@@ -129,7 +138,8 @@ def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
 
 # Function for Apple Carplay action
 def apple_carplay():
-    #subprocess.run('./Carplay.AppImage', shell=True, executable="/bin/bash")
+    global open_carplay
+    open_carplay = True
     sendmessage("Opening Apple Carplay...")
     subprocess.Popen(['./Carplay.AppImage'])
 

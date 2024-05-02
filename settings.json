@@ -4,8 +4,10 @@
         "version": "0.02"
     },
     "GPIO": {
-        "clutch": 3,
-        "brake": 3,
-        "speed": 3
+        "clutch": 29,
+        "brake": 31,
+        "speed": 32,
+        "relay1": 16,
+        "relay2": 18
     }
 }

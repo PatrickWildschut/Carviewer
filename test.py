@@ -1,15 +1,10 @@
-from ADCDACPi import ADCDACPi
+import RPi.GPIO as GPIO
 import time
 
-adc = ADCDACPi(1)
+GPIO.setmode(GPIO.BOARD)
 
-adc.set_adc_refvoltage(3.3)
+GPIO.setup(40, GPIO.OUT)
 
 while True:
-
-        # read the voltage from channel 1 in single-ended mode
-        # and display on the screen
-
-        print(adc.read_adc_voltage(1, 0))
-
-        time.sleep(0.1)
+        GPIO.output(40, GPIO.LOW)
+        time.sleep(0.05)
