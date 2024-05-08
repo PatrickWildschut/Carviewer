@@ -3,10 +3,9 @@ import sys
 import json
 import about
 import settings
-import math
 import RPi.GPIO as GPIO
 import subprocess
-
+from ADCDACPi import ADCDACPi
 
 from Carviewer_global import *
 
@@ -15,6 +14,8 @@ open_carplay = False
 
 def read_menu():
     global settings_json
+    throttle = 50  # Throttle percentage
+    speed = 60     # Speed in km/h
 
     settings_json = load_json()
     print(settings_json)
@@ -22,6 +23,10 @@ def read_menu():
     clock = pygame.time.Clock()
     running = True
     open_carplay = False
+
+    adc = ADCDACPi(1)
+
+    adc.set_adc_refvoltage(3.3)
     
     # Set display mode to fullscreen
     if sys.argv[1] == "fullscreen":
@@ -41,10 +46,19 @@ def read_menu():
                 # Check if the mouse click is within the About button area
                 elif WIDTH - 150 <= event.pos[0] <= WIDTH - 50 and 50 <= event.pos[1] <= 50 + 30:
                     about_pressed()
+        
+        # Throttle
+        throttle = adc.read_adc_voltage(1, 0) / 3.3 * 100
+
+        # Speed
+        speed += 1
+        if speed > 200:
+            speed = 0
+        clutch_pressed = GPIO.input(settings_json["GPIO"]["clutch"])
+        brake_pressed = GPIO.input(settings_json["GPIO"]["brake"])
 
         # Update dashboard
-        draw_dashboard(GetThrottlePercentage(), GetSpeed(), 
-                       GetClutch(), GetBrake())
+        draw_dashboard(throttle, speed, clutch_pressed, brake_pressed)
         
         clock.tick(settings_json["Program"]["fps"])  # Limit frame rate
         
@@ -81,55 +95,38 @@ def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
     # Throttle
     throttle_label = font_small.render("Throttle", True, TEXT_COLOR)
     screen.blit(throttle_label, (50, 150))
-    # pygame.draw.rect(screen, BUTTON_COLOR, (250, 150, throttle * 2, 30))
-
-    throttle_circle_radius = 100
-    pygame.draw.circle(screen, TEXT_COLOR, (300, 200), throttle_circle_radius, 3)
-    pygame.draw.arc(screen, TEXT_COLOR, (200, 100, 200, 200), 3 * math.pi / 2 - (throttle / 100) * 2 * math.pi, 3 * math.pi / 2, 10)
-
-
-    throttle_text = font_large.render(str(throttle), True, TEXT_COLOR)
-    screen.blit(throttle_text, (300 - throttle_text.get_width() / 2, 200 - throttle_text.get_height() / 2))
-    percent_text = font_small.render("%", True, TEXT_COLOR)
-    screen.blit(percent_text, (325, 190))
+    pygame.draw.rect(screen, BUTTON_COLOR, (250, 150, throttle * 2, 30))
     
     # Speed
-    speed_label = font_small.render("Speed", True, TEXT_COLOR)
-    screen.blit(speed_label, (550, 150))
+    # speed_label = font_small.render("Speed", True, TEXT_COLOR)
+    # screen.blit(speed_label, (550, 150))
+    # if speed > 105:
+    #     speed_text = font_small.render(f"{speed} km/h", True, (255, 0, 0))
+    # else:
+    #     speed_text = font_small.render(f"{speed} km/h", True, TEXT_COLOR)
+    # screen.blit(speed_text, (800, 150))
     
-    # Draw speed circle
-    speed_circle_radius = 100
-    pygame.draw.circle(screen, TEXT_COLOR, (800, 200), speed_circle_radius, 3)
-    
-
-    speed_text = None
-
-    if speed > 105:
-        speed_text = font_large.render(str(speed), True, RED)
-        pygame.draw.arc(screen, RED, (700, 100, 200, 200), 3 * math.pi / 2 - (speed / 200) * 2 * math.pi, 3 * math.pi / 2, 10)
-    else:
-        speed_text = font_large.render(str(speed), True, TEXT_COLOR)
-        pygame.draw.arc(screen, TEXT_COLOR, (700, 100, 200, 200), 3 * math.pi / 2 - (speed / 200) * 2 * math.pi, 3 * math.pi / 2, 10)
-    
-    screen.blit(speed_text, (800 - speed_text.get_width() / 2, 200 - speed_text.get_height() / 2))
-    kmh_text = font_small.render("km/h", True, TEXT_COLOR)
-    screen.blit(kmh_text, (775, 225))
+    pygame.draw.circle(screen, TEXT_COLOR, (150, 150), 100, 3)
+    pygame.draw.arc(screen, TEXT_COLOR, (75, 75, 150, 150), 3 * 3.14 / 4, 3 * 3.14 / 4 + speed * 3.14 / 200, 10)
+    speed_text = font_large.render(str(speed), True, TEXT_COLOR)
+    screen.blit(speed_text, (135 - speed_text.get_width() / 2, 140 - speed_text.get_height() / 2))
+    pygame.draw.rect(screen, TEXT_COLOR, (130, 200, 40, 3))
     
     # Clutch
     clutch_label = font_small.render("Clutch", True, TEXT_COLOR)
-    screen.blit(clutch_label, (50, 375))
-    clutch_text = font_small.render("Pressed" if clutch_pressed else "Released", True, RED if clutch_pressed else GREEN)
-    screen.blit(clutch_text, (300, 375))
+    screen.blit(clutch_label, (50, 300))
+    clutch_text = font_small.render("Pressed" if clutch_pressed else "Released", True, (255, 0, 0) if clutch_pressed else (0, 255, 0))
+    screen.blit(clutch_text, (300, 300))
     
     # Brake
     brake_label = font_small.render("Brake", True, TEXT_COLOR)
-    screen.blit(brake_label, (550, 375))
-    brake_text = font_small.render("Pressed" if brake_pressed else "Released", True, RED if brake_pressed else GREEN)
-    screen.blit(brake_text, (800, 375))
+    screen.blit(brake_label, (550, 300))
+    brake_text = font_small.render("Pressed" if brake_pressed else "Released", True, (255, 0, 0) if brake_pressed else (0, 255, 0))
+    screen.blit(brake_text, (800, 300))
     
     # Draw horizontal lines
-    pygame.draw.line(screen, TEXT_COLOR, (50, 330), (950, 330), 2)
-    pygame.draw.line(screen, TEXT_COLOR, (50, 450), (950, 450), 2)
+    pygame.draw.line(screen, TEXT_COLOR, (50, 200), (950, 200), 2)
+    pygame.draw.line(screen, TEXT_COLOR, (50, 350), (950, 350), 2)
     
     # Draw buttons
     button_width = 200
@@ -165,4 +162,3 @@ def settings_pressed():
 def about_pressed():
     print("About activated!")
     about.about_screen()
-

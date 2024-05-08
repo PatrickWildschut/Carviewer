@@ -1,13 +1,13 @@
 {
     "Program": {
         "fps": 30,
-        "version": "0.02"
+        "version": "0.03"
     },
     "GPIO": {
         "clutch": 29,
         "brake": 31,
         "speed": 32,
-        "relay1": 16,
-        "relay2": 18
+        "relay1": 11,
+        "relay2": 13
     }
 }

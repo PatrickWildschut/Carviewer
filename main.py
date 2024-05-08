@@ -1,21 +1,18 @@
-import pygame
+#!/usr/bin/python3
+
 import RPi.GPIO as GPIO
 
 from Carviewer_global import *
 import read
 
-settings_json = None
-
 # Gets called once
 def setup():
     GPIO.setmode(GPIO.BOARD)
 
-    settings_json = load_json()
-
     # Setup pedals
-    GPIO.setup(settings_json["GPIO"]["clutch"], GPIO.IN)
-    GPIO.setup(settings_json["GPIO"]["brake"], GPIO.IN)
-    GPIO.setup(settings_json["GPIO"]["speed"], GPIO.IN)
+    GPIO.setup(clutch_pin, GPIO.IN)
+    GPIO.setup(brake_pin, GPIO.IN)
+    GPIO.setup(speed_pin, GPIO.IN)
 
 
 # Main loop

@@ -1,10 +1,7 @@
 import RPi.GPIO as GPIO
 import time
+import pywinctl as pwc
 
-GPIO.setmode(GPIO.BOARD)
+window = pwc.getAllWindows()
 
-GPIO.setup(40, GPIO.OUT)
-
-while True:
-        GPIO.output(40, GPIO.LOW)
-        time.sleep(0.05)
+print(window)
