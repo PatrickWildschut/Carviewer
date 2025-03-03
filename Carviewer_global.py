@@ -3,7 +3,45 @@ import subprocess
 import json
 import math
 from ADCDACPi import ADCDACPi
+import time
+import datetime
+import pigpio
 import RPi.GPIO as GPIO
+
+def load_json():
+    # read json
+    with open("settings.json", "r") as file:
+        return json.load(file)
+
+# GPIO pins
+settings_json = load_json()
+clutch_pin = settings_json["GPIO"]["clutch"]
+brake_pin = settings_json["GPIO"]["brake"]
+speed_pin = settings_json["GPIO"]["speedPWM"]
+fps = settings_json["Program"]["fps"]
+
+
+# Connect to pigpio daemon
+pi = pigpio.pi()
+
+if not pi.connected:
+    print("Unable to connect to pigpio daemon")
+    exit()
+
+# Set the pin to input mode
+pi.set_mode(speed_pin, pigpio.INPUT)
+pi.set_glitch_filter(speed_pin, 1000)
+last_tick = None
+period = None
+
+def pwm_callback(gpio, level, tick):
+    global last_tick, period
+    if last_tick is not None:
+        period = pigpio.tickDiff(last_tick, tick)
+    last_tick = tick
+
+speed_from_gpio = pi.callback(speed_pin, pigpio.RISING_EDGE, pwm_callback)
+#cb = pi.callback(rpm_pin, pigpio.RISING_EDGE, pwm_callback)
 
 # Initialize Pygame
 pygame.init()
@@ -30,24 +68,13 @@ pygame.display.set_caption("Carviewer 98-RS-RV")
 adc = ADCDACPi(1)
 adc.set_adc_refvoltage(3.3)
 
-def load_json():
-    # read json
-    with open("settings.json", "r") as file:
-        return json.load(file)
-
-# Save GPIO pins
-settings_json = load_json()
-clutch_pin = settings_json["GPIO"]["clutch"]
-brake_pin = settings_json["GPIO"]["brake"]
-speed_pin = settings_json["GPIO"]["speed"]
-
 # GPIO
 
 def GetThrottle() -> float:
     return adc.read_adc_voltage(1, 0)
 
 def GetThrottlePercentage() -> int:
-    value = math.floor(adc.read_adc_voltage(1, 0) / 1.6 * 100)
+    value = math.floor((adc.read_adc_voltage(1, 0) / 1.6 - 0.1) * 100)
 
     if value > 100:
         return 100
@@ -62,5 +89,14 @@ def GetClutch() -> bool:
 def GetBrake() -> bool:
     return GPIO.input(brake_pin)
 
-def GetSpeed() -> float:
-    return 10#GPIO.wait_for_edge(speed_pin, GPIO.RISING, timeout=500)
+def GetSpeed():
+    if period is not None:
+        frequency = 1000000 / period
+        speed = int(frequency * 0.73)
+
+        if speed > 200:
+            return GetSpeed()  # ignore, invalid speed. (not roasting the car btw :) ). 
+
+        return speed
+    
+    return 0

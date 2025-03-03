@@ -6,7 +6,7 @@
     "GPIO": {
         "clutch": 29,
         "brake": 31,
-        "speed": 32,
+        "speedPWM": 13,
         "relay1": 11,
         "relay2": 13
     }

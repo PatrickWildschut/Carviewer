@@ -23,6 +23,7 @@ def settings_menu():
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                speed_from_gpio.cancel()
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:

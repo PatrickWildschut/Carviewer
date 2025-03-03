@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import RPi.GPIO as GPIO
+import pigpio
 
 from Carviewer_global import *
 import read
@@ -12,8 +13,7 @@ def setup():
     # Setup pedals
     GPIO.setup(clutch_pin, GPIO.IN)
     GPIO.setup(brake_pin, GPIO.IN)
-    GPIO.setup(speed_pin, GPIO.IN)
-
+    
 
 # Main loop
 def main():
