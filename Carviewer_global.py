@@ -1,10 +1,8 @@
 import pygame
-import subprocess
 import json
 import math
 from ADCDACPi import ADCDACPi
 import time
-import datetime
 import pigpio
 import RPi.GPIO as GPIO
 
@@ -26,6 +24,7 @@ pi = pigpio.pi()
 
 if not pi.connected:
     print("Unable to connect to pigpio daemon")
+    time.sleep(1)
     exit()
 
 # Set the pin to input mode
@@ -92,10 +91,7 @@ def GetBrake() -> bool:
 def GetSpeed():
     if period is not None:
         frequency = 1000000 / period
-        speed = int(frequency * 0.73)
-
-        if speed > 200:
-            return GetSpeed()  # ignore, invalid speed. (not roasting the car btw :) ). 
+        speed = int(frequency * 0.73) 
 
         return speed
     

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import RPi.GPIO as GPIO
-import pigpio
+import sys
 
 from Carviewer_global import *
 import read

@@ -1,12 +1,8 @@
 import pygame
 import sys
-import json
 import about
 import settings
-import math
-import RPi.GPIO as GPIO
 import subprocess
-
 
 from Carviewer_global import *
 
@@ -17,15 +13,14 @@ def read_menu():
     global settings_json
 
     settings_json = load_json()
-    print(settings_json)
     
     clock = pygame.time.Clock()
     running = True
     open_carplay = False
-    
-    # Set display mode to fullscreen
-    if sys.argv[1] == "fullscreen":
-        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "fullscreen":
+            screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     while running:
         for event in pygame.event.get():
@@ -157,12 +152,12 @@ def apple_carplay():
 def settings_pressed():
     global settings_json
 
-    print("Settings activated!")
     settings.settings_menu()
+
+    # update json, settings may have changed
     settings_json = load_json()
 
 # Function for About action
 def about_pressed():
-    print("About activated!")
     about.about_screen()
 

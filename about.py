@@ -2,6 +2,27 @@ import pygame
 import sys
 from Carviewer_global import *
 
+# # Initialize Pygame
+# pygame.init()
+
+# # Fonts
+# font_large = pygame.font.Font(None, 48)
+# font_small = pygame.font.Font(None, 36)
+
+# # Colors
+# BACKGROUND_COLOR = (30, 30, 30)
+# TEXT_COLOR = (255, 255, 255)
+# BUTTON_COLOR = (50, 50, 50)
+# BUTTON_TEXT_COLOR = (255, 255, 255)
+# RED = (255, 0, 0)
+# GREEN = (0, 255, 0)
+# BLUE = (0, 0, 255)
+
+# # Screen dimensions
+# WIDTH, HEIGHT = 1024, 600
+# screen = pygame.display.set_mode((WIDTH, HEIGHT))
+# pygame.display.set_caption("Carviewer 98-RS-RV")
+
 def about_screen():
     running = True
 
@@ -43,7 +64,7 @@ def about_screen():
         screen.blit(additional_text2, (50, 310))  # Increased spacing
 
         # Copyright
-        copyright_text = font_small.render("© 2024 Carviewer, Inc. All rights reserved.", True, (204, 204, 204))
+        copyright_text = font_small.render("© 2024-2025 Carviewer, Inc. All rights reserved.", True, (204, 204, 204))
         screen.blit(copyright_text, (50, 400))  # Increased spacing
 
         # Exit Button
