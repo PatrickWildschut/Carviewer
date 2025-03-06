@@ -3,6 +3,12 @@ import sys
 import time
 from Carviewer_global import *
 
+stage_running = False
+waiting_for_start = False
+start_time = 0
+elapsed_time = 0
+total_distance = 0
+
 def format_time(ms):
     minutes = ms // 60000
     seconds = (ms % 60000) // 1000
