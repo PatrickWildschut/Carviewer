@@ -4,6 +4,7 @@ import sys
 from Carviewer_global import *
 
 import about
+import stage
 import tripmaster
 
 def misc_screen():
@@ -35,7 +36,7 @@ def misc_screen():
                 elif buttons["Trip Master"].collidepoint(x, y):
                     tripmaster.tripmaster_screen()
                 elif buttons["Stage"].collidepoint(x, y):
-                    print("Stage selected")
+                    stage.stage_screen()
                 elif buttons["Revving"].collidepoint(x, y):
                     print("Revving selected")
 
