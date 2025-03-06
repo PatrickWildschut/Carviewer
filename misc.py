@@ -6,7 +6,7 @@ from Carviewer_global import *
 import about
 import tripmaster
 
-def about_screen():
+def misc_screen():
     running = True
     clock = pygame.time.Clock()
 
@@ -54,4 +54,4 @@ def about_screen():
     pygame.quit()
 
 if __name__ == "__main__":
-    about_screen()
+    misc_screen()

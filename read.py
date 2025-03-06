@@ -1,6 +1,6 @@
 import pygame
 import sys
-import about
+import misc
 import settings
 import subprocess
 
@@ -33,9 +33,9 @@ def read_menu():
                 # Check if the mouse click is within the Settings button area
                 elif WIDTH - 50 - 200 <= event.pos[0] <= WIDTH - 50 and 500 <= event.pos[1] <= 500 + 50:
                     settings_pressed()
-                # Check if the mouse click is within the About button area
+                # Check if the mouse click is within the Misc button area
                 elif WIDTH - 150 <= event.pos[0] <= WIDTH - 50 and 50 <= event.pos[1] <= 50 + 30:
-                    about_pressed()
+                    misc_pressed()
 
         # Update dashboard
         draw_dashboard(GetThrottlePercentage(), GetSpeed(), 
@@ -59,9 +59,9 @@ def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
     # About Button
     about_button_rect = pygame.Rect(WIDTH - 150, 50, 100, 30)
     pygame.draw.rect(screen, BUTTON_COLOR, about_button_rect)
-    about_text = font_small.render("About", True, BUTTON_TEXT_COLOR)
-    text_rect = about_text.get_rect(center=about_button_rect.center)
-    screen.blit(about_text, text_rect)
+    tools_text = font_small.render("Tools", True, BUTTON_TEXT_COLOR)
+    text_rect = tools_text.get_rect(center=about_button_rect.center)
+    screen.blit(tools_text, text_rect)
 
     # Version label
     version_text = ''
@@ -157,7 +157,7 @@ def settings_pressed():
     # update json, settings may have changed
     settings_json = load_json()
 
-# Function for About action
-def about_pressed():
-    about.about_screen()
+# Function for Misc action
+def misc_pressed():
+    misc.misc_screen()
 
