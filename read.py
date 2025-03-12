@@ -7,7 +7,6 @@ import subprocess
 from Carviewer_global import *
 
 settings_json = None
-open_carplay = False
 
 def read_menu():
     global settings_json
@@ -16,7 +15,6 @@ def read_menu():
     
     clock = pygame.time.Clock()
     running = True
-    open_carplay = False
 
     if len(sys.argv) > 1:
         if sys.argv[1] == "fullscreen":
@@ -48,8 +46,6 @@ def read_menu():
 
 # Function to draw dashboard
 def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
-    global open_carplay
-
     screen.fill(BACKGROUND_COLOR)
     
     # Title
@@ -63,13 +59,8 @@ def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
     text_rect = tools_text.get_rect(center=about_button_rect.center)
     screen.blit(tools_text, text_rect)
 
-    # Version label
-    version_text = ''
-
-    if open_carplay == True:
-        version_text = font_small.render("Opening Apple Carplay...", True, TEXT_COLOR)
-    else:
-        version_text = font_small.render(f"Version: {settings_json['Program']['version']}", True, TEXT_COLOR)
+    # version label
+    version_text = font_small.render(f"Version: {settings_json['Program']['version']}", True, TEXT_COLOR)
     
     screen.blit(version_text, (WIDTH // 2 - version_text.get_width() // 2, 550))
     
@@ -131,7 +122,7 @@ def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
     button_height = 50
     
     pygame.draw.rect(screen, BUTTON_COLOR, (50, 500, button_width, button_height))
-    apple_carplay_text = font_small.render("Apple Carplay", True, BUTTON_TEXT_COLOR)
+    apple_carplay_text = font_small.render("Apple CarPlay", True, BUTTON_TEXT_COLOR)
     text_rect = apple_carplay_text.get_rect(center=(50 + button_width // 2, 500 + button_height // 2))
     screen.blit(apple_carplay_text, text_rect)
     
@@ -142,11 +133,34 @@ def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
     
     pygame.display.flip()
 
+def fade_effect():
+    font_oac = pygame.font.Font(None, 64)
+    OVERLAY_COLOR = (30, 30, 30, 180)
+    fade_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    alpha = 0
+
+    while alpha < 180:  # Fade in effect
+        fade_surface.fill((30, 30, 30, alpha))
+        screen.blit(fade_surface, (0, 0))
+        pygame.display.flip()
+        pygame.time.delay(20)
+        alpha += 10
+
+    # Display the "Opening Apple CarPlay" message
+    fade_surface.fill(OVERLAY_COLOR)
+    screen.blit(fade_surface, (0, 0))
+    
+    carplay_text = font_oac.render("Opening Apple CarPlay", True, TEXT_COLOR)
+    text_rect = carplay_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+    screen.blit(carplay_text, text_rect)
+
+    pygame.display.flip()
+
 # Function for Apple Carplay action
 def apple_carplay():
-    global open_carplay
-    open_carplay = True
-    carplay = subprocess.Popen(['./Carplay.AppImage'])
+    fade_effect()
+    #subprocess.Popen(['./Carplay.AppImage'])
+    subprocess.run(["./Carplay.AppImage"])
 
 # Function for Settings action
 def settings_pressed():

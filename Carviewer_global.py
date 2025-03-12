@@ -43,7 +43,8 @@ speed_from_gpio = pi.callback(speed_pin, pigpio.RISING_EDGE, pwm_callback)
 #cb = pi.callback(rpm_pin, pigpio.RISING_EDGE, pwm_callback)
 
 # Initialize Pygame
-pygame.init()
+pygame.display.init()
+pygame.event.init()
 
 # Fonts
 font_large = pygame.font.Font(None, 48)

@@ -64,7 +64,7 @@ def about_screen():
         screen.blit(additional_text2, (50, 310))  # Increased spacing
 
         # Copyright
-        copyright_text = font_small.render("© 2024-2025 Carviewer, Inc. All rights reserved.", True, (204, 204, 204))
+        copyright_text = font_small.render("© 2024-2025 Carviewer, All rights reserved.", True, (204, 204, 204))
         screen.blit(copyright_text, (50, 400))  # Increased spacing
 
         # Exit Button
