@@ -37,7 +37,7 @@ def read_menu():
                     misc_pressed()
 
         # Update dashboard
-        draw_dashboard(GetThrottlePercentage(), GetSpeed(), 
+        draw_dashboard(GetThrottlePercentage(), int(GetSpeed()), 
                        GetClutch(), GetBrake())
 
         if GetButtonPressed():

@@ -98,12 +98,12 @@ def GetBrake() -> bool:
 def GetSpeed():
     if period is not None:
         frequency = 1000000 / period
-        speed = int(frequency * 0.73) 
+        speed = frequency * 0.73
 
         if speed < 5:
             return 0
 
-        return speed
+        return round(speed, 2)
     
     return 0
 
