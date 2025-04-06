@@ -76,6 +76,9 @@ adc.set_adc_refvoltage(3.3)
 def GetThrottle() -> float:
     return adc.read_adc_voltage(1, 0)
 
+def SetThrottle(value):
+    adc.set_dac_voltage(value, 1)
+
 def GetThrottlePercentage() -> int:
     value = math.floor((adc.read_adc_voltage(1, 0) / 1.4 - 0.1) * 100)
 
@@ -110,7 +113,7 @@ def SetRelays(value):
     GPIO.output(relay2_pin, not value)
 
 def GetButtonPressed():
-    return GPIO.input(cruiseButtonPressed_pin)
+    return not GPIO.input(cruiseButtonPressed_pin)
 
 def SetButtonLed(value):
     GPIO.output(cruiseButtonLed_pin, value)

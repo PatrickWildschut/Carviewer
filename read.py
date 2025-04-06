@@ -1,6 +1,7 @@
 import pygame
 import sys
 import misc
+import cruise
 import settings
 import subprocess
 
@@ -38,6 +39,9 @@ def read_menu():
         # Update dashboard
         draw_dashboard(GetThrottlePercentage(), GetSpeed(), 
                        GetClutch(), GetBrake())
+
+        if GetButtonPressed():
+            cruise.cruise_control_screen()
         
         clock.tick(settings_json["Program"]["fps"])  # Limit frame rate
         

@@ -21,6 +21,8 @@ def setup():
 
     SetButtonLed(True)
 
+    SetThrottle(1)
+
 # Main loop
 def main():
     setup()
