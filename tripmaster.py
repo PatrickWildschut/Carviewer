@@ -42,6 +42,7 @@ def tripmaster_screen():
                 # Check if start/stop button is clicked
                 if (WIDTH - 250) <= x <= (WIDTH - 50) and (HEIGHT - 100) <= y <= (HEIGHT - 50):
                     running_trip = not running_trip  # Toggle trip tracking
+                    SetRelays(running_trip)
                 
                 # Check if back button is clicked
                 if 50 <= x <= 250 and 500 <= y <= 550:

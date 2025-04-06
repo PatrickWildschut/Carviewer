@@ -16,6 +16,10 @@ settings_json = load_json()
 clutch_pin = settings_json["GPIO"]["clutch"]
 brake_pin = settings_json["GPIO"]["brake"]
 speed_pin = settings_json["GPIO"]["speedPWM"]
+cruiseButtonLed_pin = settings_json["GPIO"]["cruiseButtonLed"]
+cruiseButtonPressed_pin = settings_json["GPIO"]["cruiseButtonPressed"]
+relay1_pin = settings_json["GPIO"]["relay1"]
+relay2_pin = settings_json["GPIO"]["relay2"]
 fps = settings_json["Program"]["fps"]
 
 
@@ -44,8 +48,7 @@ speed_from_gpio = pi.callback(speed_pin, pigpio.RISING_EDGE, pwm_callback)
 
 # Initialize Pygame
 pygame.display.init()
-pygame.event.init()
-
+pygame.font.init()
 # Fonts
 font_large = pygame.font.Font(None, 48)
 font_small = pygame.font.Font(None, 36)
@@ -74,7 +77,7 @@ def GetThrottle() -> float:
     return adc.read_adc_voltage(1, 0)
 
 def GetThrottlePercentage() -> int:
-    value = math.floor((adc.read_adc_voltage(1, 0) / 1.6 - 0.1) * 100)
+    value = math.floor((adc.read_adc_voltage(1, 0) / 1.4 - 0.1) * 100)
 
     if value > 100:
         return 100
@@ -94,6 +97,20 @@ def GetSpeed():
         frequency = 1000000 / period
         speed = int(frequency * 0.73) 
 
+        if speed < 5:
+            return 0
+
         return speed
     
     return 0
+
+def SetRelays(value):
+    # needs to be inverted
+    GPIO.output(relay1_pin, not value)
+    GPIO.output(relay2_pin, not value)
+
+def GetButtonPressed():
+    return GPIO.input(cruiseButtonPressed_pin)
+
+def SetButtonLed(value):
+    GPIO.output(cruiseButtonLed_pin, value)

@@ -1,13 +1,15 @@
 {
     "Program": {
-        "fps": 30,
-        "version": "0.04"
+        "fps": 20,
+        "version": "0.05"
     },
     "GPIO": {
         "clutch": 29,
         "brake": 31,
         "speedPWM": 13,
-        "relay1": 11,
-        "relay2": 13
+        "cruiseButtonLed": 7,
+        "cruiseButtonPressed": 11,
+        "relay1": 13,
+        "relay2": 15
     }
 }
