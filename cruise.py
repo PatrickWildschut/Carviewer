@@ -8,7 +8,7 @@ enabled = False
 
 desiredSpeed = 0
 minSpeed = 30
-voltageIntervene = 0.1
+voltageIntervene = 0.01
 
 
 oldSpeed = 0
@@ -60,6 +60,9 @@ def cruise_control_screen():
         # Title
         title_text = font_large.render("Cruise Control", True, TEXT_COLOR)
         screen.blit(title_text, title_text.get_rect(center=(WIDTH // 2, 50)))
+
+        curvol_text = font_small.render(str(currentVoltage), True, TEXT_COLOR)
+        screen.blit(curvol_text, title_text.get_rect(center=(WIDTH // 2, 100)))
 
         # Current and Desired Speeds
         current_speed_text = font_large.render(f"{currentSpeed} km/h", True, TEXT_COLOR)

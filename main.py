@@ -20,8 +20,7 @@ def setup():
     GPIO.setup(cruiseButtonLed_pin, GPIO.OUT)
 
     SetButtonLed(True)
-
-    SetThrottle(1)
+    SetRelays(False)
 
 # Main loop
 def main():
