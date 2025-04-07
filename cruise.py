@@ -95,6 +95,9 @@ def cruise_control_screen():
         if enabled:
             cruise_control()
 
+        if not GetButtonPressed():
+            return # return to main.py
+
         pygame.display.flip()
         clock.tick(30)
 
@@ -113,17 +116,18 @@ def cruise_control():
 
     calculateNewVoltage()
     SetThrottle(currentVoltage)
+    SetRelays(True)
 
 def checkPedalsPressed() -> bool:
     return GetClutch() or GetBrake()
 
 def calculateNewVoltage():
     global currentVoltage
-    desiredDifference = desiredSpeed - currentSpeed;
-    deltaSpeed = oldSpeed - currentSpeed;
+    desiredDifference = desiredSpeed - currentSpeed
+    deltaSpeed = oldSpeed - currentSpeed
 
-    tooSlow = desiredDifference < 0;
-    tooFast = desiredDifference > 0;
+    tooSlow = desiredDifference < 0
+    tooFast = desiredDifference > 0
 
     if tooSlow:
         if deltaSpeed <= -desiredDifference * 0.1:
