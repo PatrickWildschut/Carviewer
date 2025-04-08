@@ -1,7 +1,7 @@
 {
     "Program": {
         "fps": 30,
-        "version": "0.05"
+        "version": "0.1"
     },
     "GPIO": {
         "clutch": 29,
