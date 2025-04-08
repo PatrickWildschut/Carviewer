@@ -8,7 +8,7 @@ enabled = False
 
 minSpeed = 30
 desiredSpeed = minSpeed
-voltageIntervene = 0.1
+voltageIntervene = 0.01
 
 oldSpeed = 0
 currentVoltage = 0.5
