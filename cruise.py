@@ -10,7 +10,7 @@ minSpeed = 30
 desiredSpeed = minSpeed
 voltageIntervene = 0.01
 
-oldSpeed = 0
+oldSpeed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 currentVoltage = 0.5
 
 # Will be updated in cruise_control_screen
@@ -23,7 +23,7 @@ def cruise_control_screen():
     clock = pygame.time.Clock()
 
     while running:
-        oldSpeed = currentSpeed
+        oldSpeed.append(currentSpeed)
         currentSpeed = GetSpeed()
 
         for event in pygame.event.get():
@@ -127,7 +127,7 @@ def checkPedalsPressed() -> bool:
 def calculateNewVoltage():
     global currentVoltage
     desiredDifference = desiredSpeed - currentSpeed
-    deltaSpeed = oldSpeed - currentSpeed
+    deltaSpeed = oldSpeed.pop(0) - currentSpeed
 
     tooSlow = desiredDifference < 0
     tooFast = desiredDifference > 0
