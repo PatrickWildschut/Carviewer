@@ -77,6 +77,11 @@ def GetThrottle() -> float:
     return adc.read_adc_voltage(1, 0)
 
 def SetThrottle(value):
+    if value < 0:
+        value = 0
+    elif value > 2:
+        value = 2
+
     adc.set_dac_voltage(1, value)
 
 def GetThrottlePercentage() -> int:

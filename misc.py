@@ -6,6 +6,7 @@ from Carviewer_global import *
 import about
 import stage
 import tripmaster
+import rev
 
 def misc_screen():
     running = True
@@ -38,7 +39,7 @@ def misc_screen():
                 elif buttons["Stage"].collidepoint(x, y):
                     stage.stage_screen()
                 elif buttons["Revving"].collidepoint(x, y):
-                    print("Revving selected")
+                    rev.revving_screen()
 
         screen.fill(BACKGROUND_COLOR)
 
