@@ -9,6 +9,7 @@ enabled = False
 minSpeed = 30
 desiredSpeed = minSpeed
 voltageIntervene = 0.01
+alpha = 0.0001
 
 oldSpeed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 currentVoltage = 0.5
@@ -17,13 +18,14 @@ currentVoltage = 0.5
 currentSpeed = 0
 
 def cruise_control_screen():
-    global enabled, oldSpeed, currentSpeed, desiredSpeed
+    global enabled, oldSpeed, currentSpeed, desiredSpeed, currentVoltage
 
     running = True
     clock = pygame.time.Clock()
 
     while running:
         oldSpeed.append(currentSpeed)
+        oldSpeed.pop(0)
         currentSpeed = GetSpeed()
 
         for event in pygame.event.get():
@@ -36,6 +38,7 @@ def cruise_control_screen():
                 # Enable/Disable Cruise Control
                 if (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 220) <= y <= (HEIGHT - 170):
                     enabled = not enabled
+                    currentVoltage = GetThrottle() * 2
 
                 # Speed control buttons
                 if (WIDTH // 2 - 225) <= x <= (WIDTH // 2 - 135) and (HEIGHT - 100) <= y <= (HEIGHT - 50):
@@ -59,7 +62,7 @@ def cruise_control_screen():
         # Title
         title_text = font_large.render("Cruise Control", True, TEXT_COLOR)
         screen.blit(title_text, (50, 50))
-
+        
         # Current and Desired Speeds
         current_speed_text = font_large.render(f"Current: {currentSpeed} km/h", True, TEXT_COLOR)
         desired_speed_text = font_large.render(f"Desired: {desiredSpeed} km/h", True, TEXT_COLOR)
@@ -125,20 +128,20 @@ def checkPedalsPressed() -> bool:
     return GetClutch() or GetBrake()
 
 def calculateNewVoltage():
-    global currentVoltage
+    global currentVoltage, desiredSpeed, voltageIntervene
     desiredDifference = desiredSpeed - currentSpeed
-    deltaSpeed = oldSpeed.pop(0) - currentSpeed
+    deltaSpeed = oldSpeed[0] - currentSpeed
 
     tooSlow = desiredDifference < 0
     tooFast = desiredDifference > 0
 
     if tooSlow:
-        if deltaSpeed <= -desiredDifference * 0.05:
+        if deltaSpeed <= -desiredDifference * 0.1:
             currentVoltage += desiredDifference * voltageIntervene
         else:
             currentVoltage -= desiredDifference * voltageIntervene
     elif tooFast:
-        if deltaSpeed >= -desiredDifference * 0.05:
+        if deltaSpeed >= -desiredDifference * 0.1:
             currentVoltage += desiredDifference * voltageIntervene
         else:
             currentVoltage -= desiredDifference * voltageIntervene
@@ -146,10 +149,11 @@ def calculateNewVoltage():
         if deltaSpeed < -0.05 or deltaSpeed > 0.05:
             currentVoltage += desiredDifference * voltageIntervene
 
-    if currentVoltage > 2:
-        currentVoltage = 2
-    elif currentVoltage < 0:
-        currentVoltage = 0
+    #gradient = -1 * desiredDifference * deltaSpeed
+    #voltageIntervene -= alpha * gradient
+
+    voltageIntervene = max(min(voltageIntervene, 0.1), 0.0001)
+    currentVoltage = max(min(currentVoltage, 2), 0.1)
 
 def setDesiredSpeed(value):
     global desiredSpeed
