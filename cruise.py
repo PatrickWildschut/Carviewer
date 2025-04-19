@@ -14,7 +14,7 @@ voltageIntervene = 0.01
 alpha = 0.0001
 
 oldSpeed = [0] * 10
-currentVoltage = 0.1
+currentVoltage = minimalVoltage
 currentSpeed = 0
 
 def cruise_control_screen():
@@ -27,7 +27,7 @@ def cruise_control_screen():
         oldSpeed.append(currentSpeed)
         oldSpeed.pop(0)
         currentSpeed = GetSpeed()
-        throttle = int((currentVoltage - 0.1) / 1.9 * 100)
+        throttle = int((currentVoltage - minimalVoltage) / 1.8 * 100)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -170,9 +170,10 @@ def setDesiredSpeed(value):
     desiredSpeed = max(min(value, maxSpeed), minSpeed)
 
 def reset():
-    global enabled
+    global enabled, currentVoltage
     SetRelays(False)
     SetThrottle(0)
+    currentVoltage = minimalVoltage
     enabled = False
 
 if __name__ == "__main__":
