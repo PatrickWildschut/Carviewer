@@ -15,6 +15,8 @@ def revving_screen():
     slider_width = 600
     slider_height = 20
 
+    SetThrottle(minimalVoltage)
+
     dragging = False
     revving = False
     countdown_start_time = None  # Timestamp for countdown
@@ -100,8 +102,8 @@ def revving_screen():
 
 def revving_action():
     SetThrottle(revving_percent / 100 * 2)
-    pygame.time.delay(100)
-    SetThrottle(0)
+    pygame.time.delay(500)
+    SetThrottle(minimalVoltage)
 
 if __name__ == "__main__":
     revving_screen()

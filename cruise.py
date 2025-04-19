@@ -163,15 +163,17 @@ def calculateNewVoltage():
         if deltaSpeed < -0.05 or deltaSpeed > 0.05:
             currentVoltage += desiredDifference * voltageIntervene
 
-    currentVoltage = max(min(currentVoltage, 2), 0.1)
+    currentVoltage = max(min(currentVoltage, 2), minimalVoltage)
 
 def setDesiredSpeed(value):
     global desiredSpeed
     desiredSpeed = max(min(value, maxSpeed), minSpeed)
 
 def reset():
+    global enabled
     SetRelays(False)
     SetThrottle(0)
+    enabled = False
 
 if __name__ == "__main__":
     cruise_control_screen()

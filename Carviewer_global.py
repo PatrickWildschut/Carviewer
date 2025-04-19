@@ -22,6 +22,7 @@ relay1_pin = settings_json["GPIO"]["relay1"]
 relay2_pin = settings_json["GPIO"]["relay2"]
 fps = settings_json["Program"]["fps"]
 
+minimalVoltage = 0.2
 
 # Connect to pigpio daemon
 pi = pigpio.pi()
