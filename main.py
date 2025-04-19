@@ -2,8 +2,8 @@
 
 import RPi.GPIO as GPIO
 import sys
-
 from Carviewer_global import *
+import intro
 import read
 
 # Gets called once
@@ -21,6 +21,8 @@ def setup():
 
     SetButtonLed(True)
     SetRelays(False)
+    
+    intro.show_intro()
 
 # Main loop
 def main():
