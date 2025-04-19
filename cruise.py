@@ -1,20 +1,20 @@
 import pygame
 import sys
 import time
+import math
 from Carviewer_global import *
 
 # Variables
 enabled = False
 
 minSpeed = 30
+maxSpeed = 150
 desiredSpeed = minSpeed
 voltageIntervene = 0.01
 alpha = 0.0001
 
-oldSpeed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-currentVoltage = 0.5
-
-# Will be updated in cruise_control_screen
+oldSpeed = [0] * 10
+currentVoltage = 0.1
 currentSpeed = 0
 
 def cruise_control_screen():
@@ -27,6 +27,7 @@ def cruise_control_screen():
         oldSpeed.append(currentSpeed)
         oldSpeed.pop(0)
         currentSpeed = GetSpeed()
+        throttle = int((currentVoltage - 0.1) / 1.9 * 100)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -41,64 +42,76 @@ def cruise_control_screen():
                     currentVoltage = GetThrottle() * 2
 
                 # Speed control buttons
-                if (WIDTH // 2 - 225) <= x <= (WIDTH // 2 - 135) and (HEIGHT - 100) <= y <= (HEIGHT - 50):
-                    setDesiredSpeed(desiredSpeed - 5)
+                if 50 <= x <= 140:
+                    if 400 <= y <= 450:
+                        setDesiredSpeed(desiredSpeed - 1)
+                    elif 460 <= y <= 510:
+                        setDesiredSpeed(desiredSpeed - 5)
 
-                if (WIDTH // 2 - 115) <= x <= (WIDTH // 2 - 25) and (HEIGHT - 100) <= y <= (HEIGHT - 50):
-                    setDesiredSpeed(desiredSpeed - 1)
-
-                if (WIDTH // 2 + 25) <= x <= (WIDTH // 2 + 115) and (HEIGHT - 100) <= y <= (HEIGHT - 50):
-                    setDesiredSpeed(desiredSpeed + 1)
-
-                if (WIDTH // 2 + 135) <= x <= (WIDTH // 2 + 225) and (HEIGHT - 100) <= y <= (HEIGHT - 50):
-                    setDesiredSpeed(desiredSpeed + 5)
-
-                # Current Speed Button
-                if (WIDTH // 2 + 245) <= x <= (WIDTH // 2 + 435) and (HEIGHT - 100) <= y <= (HEIGHT - 50):
-                    setDesiredSpeed(currentSpeed)
+                if WIDTH - 140 <= x <= WIDTH - 50:
+                    if 400 <= y <= 450:
+                        setDesiredSpeed(desiredSpeed + 1)
+                    elif 460 <= y <= 510:
+                        setDesiredSpeed(desiredSpeed + 5)
 
         screen.fill(BACKGROUND_COLOR)
 
         # Title
         title_text = font_large.render("Cruise Control", True, TEXT_COLOR)
-        screen.blit(title_text, (50, 50))
-        
-        # Current and Desired Speeds
-        current_speed_text = font_large.render(f"Current: {currentSpeed} km/h", True, TEXT_COLOR)
+        screen.blit(title_text, (50, 30))
+
+        # Throttle Circle
+        throttle_label = font_small.render("Throttle", True, TEXT_COLOR)
+        screen.blit(throttle_label, (50, 100))
+        pygame.draw.circle(screen, TEXT_COLOR, (300, 200), 100, 3)
+        pygame.draw.arc(screen, TEXT_COLOR, (200, 100, 200, 200),
+                        3 * math.pi / 2 - (throttle / 100) * 2 * math.pi, 3 * math.pi / 2, 10)
+        throttle_text = font_large.render(str(throttle), True, TEXT_COLOR)
+        screen.blit(throttle_text, (300 - throttle_text.get_width() / 2, 200 - throttle_text.get_height() / 2))
+        screen.blit(font_small.render("%", True, TEXT_COLOR), (325, 190))
+
+        # Speed Circle
+        speed_label = font_small.render("Speed", True, TEXT_COLOR)
+        screen.blit(speed_label, (550, 100))
+        pygame.draw.circle(screen, TEXT_COLOR, (800, 200), 100, 3)
+        if currentSpeed > 105:
+            speed_color = RED
+        else:
+            speed_color = TEXT_COLOR
+        pygame.draw.arc(screen, speed_color, (700, 100, 200, 200),
+                        3 * math.pi / 2 - (currentSpeed / 200) * 2 * math.pi, 3 * math.pi / 2, 10)
+        speed_text = font_large.render(str(currentSpeed), True, speed_color)
+        screen.blit(speed_text, (800 - speed_text.get_width() / 2, 200 - speed_text.get_height() / 2))
+        screen.blit(font_small.render("km/h", True, TEXT_COLOR), (775, 225))
+
+        # Desired Speed Text below throttle and speed
         desired_speed_text = font_large.render(f"Desired: {desiredSpeed} km/h", True, TEXT_COLOR)
-        screen.blit(current_speed_text, (WIDTH // 2 - 300, 150))
-        screen.blit(desired_speed_text, (WIDTH // 2 + 50, 150))
+        screen.blit(desired_speed_text, (WIDTH // 2 - desired_speed_text.get_width() // 2, 330))
 
         # Cruise Control toggle button
         cruise_control_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT - 220, 200, 50)
         pygame.draw.rect(screen, BUTTON_COLOR, cruise_control_rect)
-        cruise_control_text = font_small.render(
-            "Disable Cruise" if enabled else "Enable Cruise", True, BUTTON_TEXT_COLOR
-        )
+        cruise_control_text = font_small.render("Disable Cruise" if enabled else "Enable Cruise", True, BUTTON_TEXT_COLOR)
         screen.blit(cruise_control_text, cruise_control_text.get_rect(center=cruise_control_rect.center))
 
-        # Desired speed adjustment buttons
-        button_width = 90
-        button_height = 50
-        y_pos = HEIGHT - 100
-        speed_buttons = [
-            ("-5", WIDTH // 2 - 225),
-            ("-1", WIDTH // 2 - 115),
-            ("+1", WIDTH // 2 + 25),
-            ("+5", WIDTH // 2 + 135)
-        ]
+        # Vertical Speed Adjustment Buttons
+        button_size = (90, 50)
 
-        for label, x_pos in speed_buttons:
-            rect = pygame.Rect(x_pos, y_pos, button_width, button_height)
+        # Left side (-5 and -1)
+        left_buttons = [("-1", 400), ("-5", 460)]
+        for label, y in left_buttons:
+            rect = pygame.Rect(50, y, *button_size)
             pygame.draw.rect(screen, BUTTON_COLOR, rect)
             text = font_small.render(label, True, BUTTON_TEXT_COLOR)
             screen.blit(text, text.get_rect(center=rect.center))
 
-        # Current Speed Set button
-        rect = pygame.Rect(WIDTH // 2 + 245, y_pos, button_width * 2, button_height)
-        pygame.draw.rect(screen, BUTTON_COLOR, rect)
-        text = font_small.render("Current Speed", True, BUTTON_TEXT_COLOR)
-        screen.blit(text, text.get_rect(center=rect.center))
+        # Right side (+1 and +5)
+        right_buttons = [("+1", 400), ("+5", 460)]
+        for label, y in right_buttons:
+            rect = pygame.Rect(WIDTH - 140, y, *button_size)
+            pygame.draw.rect(screen, BUTTON_COLOR, rect)
+            text = font_small.render(label, True, BUTTON_TEXT_COLOR)
+            screen.blit(text, text.get_rect(center=rect.center))
 
         if enabled:
             cruise_control()
@@ -150,19 +163,11 @@ def calculateNewVoltage():
         if deltaSpeed < -0.05 or deltaSpeed > 0.05:
             currentVoltage += desiredDifference * voltageIntervene
 
-    #gradient = -1 * desiredDifference * deltaSpeed
-    #voltageIntervene -= alpha * gradient
-
-    voltageIntervene = max(min(voltageIntervene, 0.1), 0.0001)
     currentVoltage = max(min(currentVoltage, 2), 0.1)
 
 def setDesiredSpeed(value):
     global desiredSpeed
-
-    if value < minSpeed:
-        desiredSpeed = int(minSpeed)
-    else:
-        desiredSpeed = int(value)
+    desiredSpeed = max(min(value, maxSpeed), minSpeed)
 
 def reset():
     SetRelays(False)

@@ -80,9 +80,9 @@ def revving_screen():
         screen.blit(rev_text, rev_text_rect)
 
         # Slider
-        pygame.draw.rect(screen, SLIDER_COLOR, (slider_x, slider_y, slider_width, slider_height))
+        pygame.draw.rect(screen, RED, (slider_x, slider_y, slider_width, slider_height))
         fill_width = int((revving_percent / 100) * slider_width)
-        pygame.draw.rect(screen, SLIDER_FILL_COLOR, (slider_x, slider_y, fill_width, slider_height))
+        pygame.draw.rect(screen, GREEN, (slider_x, slider_y, fill_width, slider_height))
         percent_text = font_small.render(f"{revving_percent}%", True, TEXT_COLOR)
         screen.blit(percent_text, (slider_x + slider_width + 10, slider_y - 5))
 
@@ -99,7 +99,7 @@ def revving_screen():
     pygame.quit()
 
 def revving_action():
-    SetThrottle(2*revving_percent/100)
+    SetThrottle(revving_percent / 100 * 2)
     pygame.time.delay(100)
     SetThrottle(0)
 
