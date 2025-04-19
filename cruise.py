@@ -106,6 +106,7 @@ def cruise_control_screen():
             reset()
 
         if not GetButtonPressed():
+            reset()
             return # back to read.py
 
         pygame.display.flip()
@@ -136,12 +137,12 @@ def calculateNewVoltage():
     tooFast = desiredDifference > 0
 
     if tooSlow:
-        if deltaSpeed <= -desiredDifference * 0.1:
+        if deltaSpeed <= -desiredDifference * 0.2:
             currentVoltage += desiredDifference * voltageIntervene
         else:
             currentVoltage -= desiredDifference * voltageIntervene
     elif tooFast:
-        if deltaSpeed >= -desiredDifference * 0.1:
+        if deltaSpeed >= -desiredDifference * 0.2:
             currentVoltage += desiredDifference * voltageIntervene
         else:
             currentVoltage -= desiredDifference * voltageIntervene
@@ -159,9 +160,9 @@ def setDesiredSpeed(value):
     global desiredSpeed
 
     if value < minSpeed:
-        desiredSpeed = minSpeed
+        desiredSpeed = int(minSpeed)
     else:
-        desiredSpeed = value
+        desiredSpeed = int(value)
 
 def reset():
     SetRelays(False)
