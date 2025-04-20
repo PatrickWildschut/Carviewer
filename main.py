@@ -21,6 +21,11 @@ def setup():
 
     SetButtonLed(True)
     SetRelays(False)
+
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "fullscreen":
+            screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
     
     intro.show_intro()
 

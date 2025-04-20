@@ -17,10 +17,7 @@ def read_menu():
     clock = pygame.time.Clock()
     running = True
 
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "fullscreen":
-            screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-
+    
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -37,7 +34,7 @@ def read_menu():
                     misc_pressed()
 
         # Update dashboard
-        draw_dashboard(GetThrottlePercentage(), int(GetSpeed()), 
+        draw_dashboard(GetThrottlePercentage(), GetSpeed(), 
                        GetClutch(), GetBrake())
 
         if GetButtonPressed():
@@ -95,10 +92,10 @@ def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
     speed_text = None
 
     if speed > 105:
-        speed_text = font_large.render(str(speed), True, RED)
+        speed_text = font_large.render(str(int(speed)), True, RED)
         pygame.draw.arc(screen, RED, (700, 100, 200, 200), 3 * math.pi / 2 - (speed / 200) * 2 * math.pi, 3 * math.pi / 2, 10)
     else:
-        speed_text = font_large.render(str(speed), True, TEXT_COLOR)
+        speed_text = font_large.render(str(int(speed)), True, TEXT_COLOR)
         pygame.draw.arc(screen, TEXT_COLOR, (700, 100, 200, 200), 3 * math.pi / 2 - (speed / 200) * 2 * math.pi, 3 * math.pi / 2, 10)
     
     screen.blit(speed_text, (800 - speed_text.get_width() / 2, 200 - speed_text.get_height() / 2))

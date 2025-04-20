@@ -58,11 +58,11 @@ def cruise_control_screen():
 
         # Title
         title_text = font_large.render("Cruise Control", True, TEXT_COLOR)
-        screen.blit(title_text, (50, 30))
+        screen.blit(title_text, (50, 50))
 
         # Throttle Circle
         throttle_label = font_small.render("Throttle", True, TEXT_COLOR)
-        screen.blit(throttle_label, (50, 100))
+        screen.blit(throttle_label, (50, 150))
         pygame.draw.circle(screen, TEXT_COLOR, (300, 200), 100, 3)
         pygame.draw.arc(screen, TEXT_COLOR, (200, 100, 200, 200),
                         3 * math.pi / 2 - (throttle / 100) * 2 * math.pi, 3 * math.pi / 2, 10)
@@ -72,7 +72,7 @@ def cruise_control_screen():
 
         # Speed Circle
         speed_label = font_small.render("Speed", True, TEXT_COLOR)
-        screen.blit(speed_label, (550, 100))
+        screen.blit(speed_label, (550, 150))
         pygame.draw.circle(screen, TEXT_COLOR, (800, 200), 100, 3)
         if currentSpeed > 105:
             speed_color = RED
@@ -80,7 +80,7 @@ def cruise_control_screen():
             speed_color = TEXT_COLOR
         pygame.draw.arc(screen, speed_color, (700, 100, 200, 200),
                         3 * math.pi / 2 - (currentSpeed / 200) * 2 * math.pi, 3 * math.pi / 2, 10)
-        speed_text = font_large.render(str(currentSpeed), True, speed_color)
+        speed_text = font_large.render(str(int(currentSpeed)), True, speed_color)
         screen.blit(speed_text, (800 - speed_text.get_width() / 2, 200 - speed_text.get_height() / 2))
         screen.blit(font_small.render("km/h", True, TEXT_COLOR), (775, 225))
 
