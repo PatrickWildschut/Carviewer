@@ -46,7 +46,7 @@ period_rpm = None
 def pwm_callback_speed(gpio, level, tick):
     global last_tick_speed, period_speed
     if last_tick_speed is not None:
-        period_speed = pigpio.tickDiff(last_tick, tick)
+        period_speed = pigpio.tickDiff(last_tick_speed, tick)
     last_tick_speed = tick
 
 def pwm_callback_rpm(gpio, level, tick):
@@ -126,7 +126,7 @@ def GetSpeed():
     return 0
 
 
-old_rpm = [0] * 5
+old_rpm = [0] * 30
 def GetRPM():
     global old_rpm
 
@@ -137,17 +137,20 @@ def GetRPM():
         old_rpm.append(rpm)
         old_rpm.pop(0)
 
-        if old_rpm[0] != rpm:
+        if old_rpm[0] != rpm or GetSpeed() > 0:
             return int(rpm)
 
     return 0
 
 # speed multiplication to get RPM
-gears = [150, 75, 52, 43, 34]
+gears = [150, 75, 52, 43, 34, 25]
 
 def GetGear():
     current_speed = GetSpeed()
     current_rpm = GetRPM()
+
+    if current_rpm < 1000:
+        return -1
 
     # Calculate RPMs for each gear
     calculated_rpms = [current_speed * gear for gear in gears]
@@ -156,10 +159,12 @@ def GetGear():
     best_gear_index = min(
         range(len(calculated_rpms)),
         key=lambda i: abs(calculated_rpms[i] - current_rpm)
-    )
+    ) + 1
 
-    # Return gear number (1-based indexing)
-    return best_gear_index + 1
+    if best_gear_index == 6 or GetClutch():
+        best_gear_index = -1
+    
+    return best_gear_index
 
 def SetRelays(value):
     # needs to be inverted

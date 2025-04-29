@@ -117,7 +117,7 @@ def fancy_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     screen.blit(throttle_label, (throttle_pos[0] - throttle_label.get_width() // 2, throttle_pos[1] + 40))
 
     # Draw current gear
-    rpm_label = font_super_large.render(str(gear), True, TEXT_COLOR)
+    rpm_label = font_super_large.render(str(gear) if gear != -1 else "N", True, TEXT_COLOR)
     screen.blit(rpm_label, (WIDTH // 2 - rpm_label.get_width() // 2, 170))
 
     # Draw Speed Circle
