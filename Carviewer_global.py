@@ -62,6 +62,7 @@ rpm_from_gpio = pi.callback(rpm_pin, pigpio.RISING_EDGE, pwm_callback_rpm)
 pygame.display.init()
 pygame.font.init()
 # Fonts
+font_super_large = pygame.font.Font(None, 64)
 font_large = pygame.font.Font(None, 48)
 font_small = pygame.font.Font(None, 36)
 
@@ -140,6 +141,25 @@ def GetRPM():
             return int(rpm)
 
     return 0
+
+# speed multiplication to get RPM
+gears = [150, 75, 52, 43, 34]
+
+def GetGear():
+    current_speed = GetSpeed()
+    current_rpm = GetRPM()
+
+    # Calculate RPMs for each gear
+    calculated_rpms = [current_speed * gear for gear in gears]
+
+    # Find the index of the gear with the closest RPM
+    best_gear_index = min(
+        range(len(calculated_rpms)),
+        key=lambda i: abs(calculated_rpms[i] - current_rpm)
+    )
+
+    # Return gear number (1-based indexing)
+    return best_gear_index + 1
 
 def SetRelays(value):
     # needs to be inverted
