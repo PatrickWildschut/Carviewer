@@ -6,7 +6,7 @@ from Carviewer_global import *
 # Variables
 running_trip = False
 trip_distance = 0.0
-total_distance = 1200.0  # Assume 1200 km as total distance (can be loaded from a file)
+total_distance = 0.0  # Assume 0 km as total distance (can be loaded from a file)
 last_update_time = time.time()
 
 def tripmaster_screen():
@@ -42,7 +42,6 @@ def tripmaster_screen():
                 # Check if start/stop button is clicked
                 if (WIDTH - 250) <= x <= (WIDTH - 50) and (HEIGHT - 100) <= y <= (HEIGHT - 50):
                     running_trip = not running_trip  # Toggle trip tracking
-                    SetRelays(running_trip)
                 
                 # Check if back button is clicked
                 if 50 <= x <= 250 and 500 <= y <= 550:

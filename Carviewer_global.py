@@ -16,6 +16,7 @@ settings_json = load_json()
 clutch_pin = settings_json["GPIO"]["clutch"]
 brake_pin = settings_json["GPIO"]["brake"]
 speed_pin = settings_json["GPIO"]["speedPWM"]
+rpm_pin = settings_json["GPIO"]["rpmPWM"]
 cruiseButtonLed_pin = settings_json["GPIO"]["cruiseButtonLed"]
 cruiseButtonPressed_pin = settings_json["GPIO"]["cruiseButtonPressed"]
 relay1_pin = settings_json["GPIO"]["relay1"]
@@ -34,18 +35,28 @@ if not pi.connected:
 
 # Set the pin to input mode
 pi.set_mode(speed_pin, pigpio.INPUT)
+pi.set_mode(rpm_pin, pigpio.INPUT)
 pi.set_glitch_filter(speed_pin, 1000)
-last_tick = None
-period = None
+pi.set_glitch_filter(rpm_pin, 1000)
+last_tick_speed = None
+last_tick_rpm = None
+period_speed = None
+period_rpm = None
 
-def pwm_callback(gpio, level, tick):
-    global last_tick, period
-    if last_tick is not None:
-        period = pigpio.tickDiff(last_tick, tick)
-    last_tick = tick
+def pwm_callback_speed(gpio, level, tick):
+    global last_tick_speed, period_speed
+    if last_tick_speed is not None:
+        period_speed = pigpio.tickDiff(last_tick, tick)
+    last_tick_speed = tick
 
-speed_from_gpio = pi.callback(speed_pin, pigpio.RISING_EDGE, pwm_callback)
-#cb = pi.callback(rpm_pin, pigpio.RISING_EDGE, pwm_callback)
+def pwm_callback_rpm(gpio, level, tick):
+    global last_tick_rpm, period_rpm
+    if last_tick_rpm is not None:
+        period_rpm = pigpio.tickDiff(last_tick_rpm, tick)
+    last_tick_rpm = tick
+
+speed_from_gpio = pi.callback(speed_pin, pigpio.RISING_EDGE, pwm_callback_speed)
+rpm_from_gpio = pi.callback(rpm_pin, pigpio.RISING_EDGE, pwm_callback_rpm)
 
 # Initialize Pygame
 pygame.display.init()
@@ -102,8 +113,8 @@ def GetBrake() -> bool:
     return GPIO.input(brake_pin)
 
 def GetSpeed():
-    if period is not None:
-        frequency = 1000000 / period
+    if period_speed is not None:
+        frequency = 1000000 / period_speed
         speed = frequency * 0.73
 
         if speed < 5:
@@ -111,6 +122,23 @@ def GetSpeed():
 
         return round(speed, 2)
     
+    return 0
+
+
+old_rpm = [0] * 5
+def GetRPM():
+    global old_rpm
+
+    if period_rpm is not None:
+        frequency = 1000000 / period_rpm
+
+        rpm = frequency * 60
+        old_rpm.append(rpm)
+        old_rpm.pop(0)
+
+        if old_rpm[0] != rpm:
+            return int(rpm)
+
     return 0
 
 def SetRelays(value):

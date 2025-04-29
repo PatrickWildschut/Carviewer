@@ -10,7 +10,7 @@ enabled = False
 minSpeed = 30
 maxSpeed = 150
 desiredSpeed = minSpeed
-voltageIntervene = 0.01
+voltageIntervene = 0.008
 alpha = 0.0001
 
 oldSpeed = [0] * 10

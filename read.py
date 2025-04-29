@@ -113,6 +113,12 @@ def draw_dashboard(throttle, speed, clutch_pressed, brake_pressed):
     screen.blit(brake_label, (550, 375))
     brake_text = font_small.render("Pressed" if brake_pressed else "Released", True, RED if brake_pressed else GREEN)
     screen.blit(brake_text, (800, 375))
+
+    # RPM test
+    rpm_label = font_small.render("RPM", True, TEXT_COLOR)
+    screen.blit(rpm_label, (350, 475))
+    rpm_text = font_small.render(str(GetRPM()), True, RED if brake_pressed else GREEN)
+    screen.blit(rpm_text, (500, 475))
     
     # Draw horizontal lines
     pygame.draw.line(screen, TEXT_COLOR, (50, 330), (950, 330), 2)
