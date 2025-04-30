@@ -23,7 +23,7 @@ font_large = pygame.font.Font(None, 48)
 font_small = pygame.font.Font(None, 36)
 
 # Colors
-BACKGROUND_COLOR = (30, 30, 30)
+BACKGROUND_COLOR = (20, 20, 25)
 TEXT_COLOR = (255, 255, 255)
 BUTTON_COLOR = (50, 50, 50)
 BUTTON_TEXT_COLOR = (255, 255, 255)
@@ -48,7 +48,7 @@ def SetThrottle(value):
 
 def GetThrottlePercentage() -> int:
     # Simulate a percentage from 0 to 100
-    return 50
+    return random.randint(0, 100)
 
 def GetClutch() -> bool:
     # Randomly simulate clutch being pressed or not
@@ -60,7 +60,7 @@ def GetBrake() -> bool:
 
 def GetSpeed():
     # Simulate a speed between 0 and 120 km/h
-    return 110
+    return random.randint(80, 120)
 
 old_rpm = 1000
 def GetRPM():

@@ -18,7 +18,6 @@ def read_menu():
     clock = pygame.time.Clock()
     running = True
 
-    print("miauw")
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -46,7 +45,7 @@ def read_menu():
             layouts.dirt_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
         elif selected_layout == "F1":
-            layouts.f1_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
+            layouts.futuristic_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())   
 
         # Update dashboard

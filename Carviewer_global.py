@@ -67,7 +67,7 @@ font_large = pygame.font.Font(None, 48)
 font_small = pygame.font.Font(None, 36)
 
 # Colors
-BACKGROUND_COLOR = (30, 30, 30)
+BACKGROUND_COLOR = (20, 20, 25)
 TEXT_COLOR = (255, 255, 255)
 BUTTON_COLOR = (50, 50, 50)
 BUTTON_TEXT_COLOR = (255, 255, 255)
