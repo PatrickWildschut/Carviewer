@@ -187,11 +187,12 @@ def fancy_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
 
     # --- Version ---
     version_text = font_small.render(f"Version: {settings_json['Program']['version']}", True, TEXT_COLOR)
-    screen.blit(version_text, (WIDTH // 2 - version_text.get_width() // 2, HEIGHT - 25))
+    screen.blit(version_text, (WIDTH // 2 - version_text.get_width() // 2, HEIGHT - 50))
 
 
 # Laad de afbeeldingen als textures
 main_bg = pygame.image.load('images/main_bg.png').convert_alpha()
+dirt2 = pygame.image.load('images/dirt2.png').convert_alpha()
 tach_8000 = pygame.image.load('images/tach_6000.png').convert_alpha()
 needle_revs = pygame.image.load('images/needle_revs.png').convert_alpha()
 
@@ -210,12 +211,19 @@ def dirt_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     center_x = WIDTH // 2
     center_y = HEIGHT // 2 + 40
 
+    main_bg_y_offset = -50
+
+    # --- DiRT 2 logo ---
+    scaled_dirt2 = pygame.transform.scale(dirt2, (int(dirt2.get_width()*0.6), int(dirt2.get_height()*0.6)))
+    dirt2_rect = scaled_dirt2.get_rect(center=(center_x - 325, center_y - 225))
+    screen.blit(scaled_dirt2, dirt2_rect)
+
     # --- Tachometer Background ---
     scaled_main_bg = pygame.transform.scale(main_bg, (int(main_bg.get_width() * 1.2), int(main_bg.get_height() * 1.2)))
-    main_bg_rect = scaled_main_bg.get_rect(center=(center_x, center_y - 100))
+    main_bg_rect = scaled_main_bg.get_rect(center=(center_x, center_y + main_bg_y_offset))
     screen.blit(scaled_main_bg, main_bg_rect)
 
-    tach_rect = tach_8000.get_rect(center=(center_x + 5, center_y - 130))
+    tach_rect = tach_8000.get_rect(center=(center_x + 5, center_y + main_bg_y_offset - 30))
     screen.blit(tach_8000, tach_rect)
 
     # --- Needle ---
@@ -235,20 +243,20 @@ def dirt_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     pivot_surface.blit(scaled_needle, needle_pos)
 
     rotated_pivot_surface = pygame.transform.rotozoom(pivot_surface, -needle_angle, 1.0)
-    rotated_pivot_rect = rotated_pivot_surface.get_rect(center=(center_x + 3, center_y - 95))
+    rotated_pivot_rect = rotated_pivot_surface.get_rect(center=(center_x + 3, center_y + main_bg_y_offset + 5))
     screen.blit(rotated_pivot_surface, rotated_pivot_rect)
 
     # --- Gear Icon ---
     if gear in gear_textures:
         gear_texture = gear_textures[gear]
-        gear_rect = gear_texture.get_rect(center=(center_x - 102, center_y - 10))
+        gear_rect = gear_texture.get_rect(center=(center_x - 102, center_y + main_bg_y_offset + 90))
         screen.blit(gear_texture, gear_rect)
 
     # --- Speed ---
     speed_text = font_large.render(str(int(speed)), True, (0, 0, 0))
-    screen.blit(speed_text, (center_x - speed_text.get_width() // 2 + 3, center_y - 62))
+    screen.blit(speed_text, (center_x - speed_text.get_width() // 2 + 3, center_y + main_bg_y_offset + 38))
     kmh_text = font_small.render("KMH", True, TEXT_COLOR)
-    screen.blit(kmh_text, (center_x - kmh_text.get_width() // 2, center_y + 25))
+    screen.blit(kmh_text, (center_x - kmh_text.get_width() // 2, center_y + main_bg_y_offset + 125))
 
     # --- Clutch Indicator ---
     clutch_label = font_small.render("Clutch", True, TEXT_COLOR)
@@ -288,7 +296,7 @@ def dirt_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
 
     # --- Version ---
     version_text = font_small.render(f"Version: {settings_json['Program']['version']}", True, TEXT_COLOR)
-    screen.blit(version_text, (WIDTH // 2 - version_text.get_width() // 2, HEIGHT - 25))
+    screen.blit(version_text, (WIDTH // 2 - version_text.get_width() // 2, HEIGHT - 50))
 
 
 def futuristic_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):

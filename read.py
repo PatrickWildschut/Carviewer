@@ -54,7 +54,11 @@ def read_menu():
         pygame.display.flip()
 
         if GetButtonPressed():
+            # forground Carviewer, (for if CarPlay is running)
+            subprocess.run(["wmctrl -a 'Carviewer 98-RS-RV'"])
             cruise.cruise_control_screen()
+            # foregroud Carplay, (for if CarPlay is running)
+            subprocess.run(["wmctrl -a 'Carplay.AppImage"])
         
         clock.tick(settings_json["Program"]["fps"])  # Limit frame rate
         
@@ -88,8 +92,9 @@ def fade_effect():
 # Function for Apple Carplay action
 def apple_carplay():
     fade_effect()
-    #subprocess.Popen(['./Carplay.AppImage'])
-    subprocess.run(["./Carplay.AppImage"])
+    subprocess.Popen(['./Carplay.AppImage'])
+    time.sleep(5)
+    #subprocess.run(["./Carplay.AppImage"])
 
 # Function for Settings action
 def settings_pressed():

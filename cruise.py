@@ -17,6 +17,9 @@ oldSpeed = [0] * 10
 currentVoltage = minimalVoltage
 currentSpeed = 0
 
+ledInterval = 0
+buttonLed = True
+
 def cruise_control_screen():
     global enabled, oldSpeed, currentSpeed, desiredSpeed, currentVoltage
 
@@ -128,7 +131,7 @@ def cruise_control_screen():
     pygame.quit()
 
 def cruise_control():
-    global enabled
+    global enabled, ledInterval
 
     if checkPedalsPressed():
         enabled = False
@@ -137,6 +140,13 @@ def cruise_control():
     calculateNewVoltage()
     SetThrottle(currentVoltage)
     SetRelays(True)
+
+    ledInterval += 1
+
+    if ledInterval == 30:
+        buttonLed = not buttonLed
+        SetButtonLed(buttonLed)
+        ledInterval = 0
 
 def checkPedalsPressed() -> bool:
     return GetClutch() or GetBrake()
@@ -170,11 +180,13 @@ def setDesiredSpeed(value):
     desiredSpeed = max(min(value, maxSpeed), minSpeed)
 
 def reset():
-    global enabled, currentVoltage
+    global enabled, currentVoltage, ledInterval, buttonLed
     SetRelays(False)
     SetThrottle(0)
     currentVoltage = minimalVoltage
     enabled = False
+    ledInterval = 0
+    buttonLed = True
 
 if __name__ == "__main__":
     cruise_control_screen()
