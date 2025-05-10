@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 import math
+import subprocess
 from Carviewer_global import *
 
 # Variables
@@ -19,9 +20,10 @@ currentSpeed = 0
 
 ledInterval = 0
 buttonLed = True
+oldButtonState = False
 
-def cruise_control_screen():
-    global enabled, oldSpeed, currentSpeed, desiredSpeed, currentVoltage
+def cruise_control_screen(carplay):
+    global enabled, oldSpeed, currentSpeed, desiredSpeed, currentVoltage, oldButtonState
 
     running = True
     clock = pygame.time.Clock()
@@ -30,7 +32,7 @@ def cruise_control_screen():
         oldSpeed.append(currentSpeed)
         oldSpeed.pop(0)
         currentSpeed = GetSpeed()
-        throttle = int((currentVoltage - minimalVoltage) / 1.8 * 100)
+        throttle = int((currentVoltage - minimalVoltage) / 3.1 * 100)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -121,9 +123,31 @@ def cruise_control_screen():
         else:
             reset()
 
-        if not GetButtonPressed():
-            reset()
-            return # back to read.py
+        if carplay == None:
+            if not GetButtonPressed():
+                reset()
+                return # back to read.py
+
+        else:
+            # Carplay-cruise control mode
+            if carplay.poll() == None:
+                # Carplay still running
+
+                # Only update on Press/Unpress
+                currentButtonState = GetButtonPressed()
+                if oldButtonState == currentButtonState:
+                    continue
+
+                if currentButtonState:
+                    subprocess.run(["wmctrl -a 'Carviewer 98-RS-RV'"])
+                else:
+                    subprocess.run(["wmctrl -a 'Carplay.AppImage'"])
+
+                oldButtonState = currentButtonState
+            else:
+                # Carplay terminated, exit Carplay-cruise control mode
+                reset()
+                return
 
         pygame.display.flip()
         clock.tick(30)
@@ -151,6 +175,14 @@ def cruise_control():
 def checkPedalsPressed() -> bool:
     return GetClutch() or GetBrake()
 
+def map_value(x, in_min, in_max, out_min, out_max):
+    if x < in_min:
+        return out_min
+    elif x > in_max:
+        return out_max
+
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+
 def calculateNewVoltage():
     global currentVoltage, desiredSpeed, voltageIntervene
     desiredDifference = desiredSpeed - currentSpeed
@@ -173,7 +205,7 @@ def calculateNewVoltage():
         if deltaSpeed < -0.05 or deltaSpeed > 0.05:
             currentVoltage += desiredDifference * voltageIntervene
 
-    currentVoltage = max(min(currentVoltage, 2), minimalVoltage)
+    currentVoltage = max(min(currentVoltage, map_value(math.abs(desiredDifference), 2, 10, 2, 3.3)), minimalVoltage)
 
 def setDesiredSpeed(value):
     global desiredSpeed
@@ -182,11 +214,12 @@ def setDesiredSpeed(value):
 def reset():
     global enabled, currentVoltage, ledInterval, buttonLed
     SetRelays(False)
-    SetThrottle(0)
+    SetThrottle(minimalVoltage)
     currentVoltage = minimalVoltage
     enabled = False
     ledInterval = 0
     buttonLed = True
+    SetButtonLed(buttonLed)
 
 if __name__ == "__main__":
     cruise_control_screen()

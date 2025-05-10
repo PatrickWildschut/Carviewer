@@ -81,7 +81,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Carviewer 98-RS-RV")
 
 # ADC DAC
-adc = ADCDACPi(1)
+adc = ADCDACPi(2)
 adc.set_adc_refvoltage(3.3)
 
 # GPIO
@@ -92,8 +92,8 @@ def GetThrottle() -> float:
 def SetThrottle(value):
     if value < 0:
         value = 0
-    elif value > 2:
-        value = 2
+    elif value > 3.3:
+        value = 3.3
 
     adc.set_dac_voltage(1, value)
 
