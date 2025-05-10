@@ -76,7 +76,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 # Screen dimensions
-WIDTH, HEIGHT = 1024, 600
+WIDTH, HEIGHT = 1024, 576
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Carviewer 98-RS-RV")
 
@@ -92,8 +92,8 @@ def GetThrottle() -> float:
 def SetThrottle(value):
     if value < 0:
         value = 0
-    elif value > 3.3:
-        value = 3.3
+    elif value > 3.29:
+        value = 3.29
 
     adc.set_dac_voltage(1, value)
 

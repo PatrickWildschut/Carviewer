@@ -1,9 +1,10 @@
-def map_value(x, in_min, in_max, out_min, out_max):
-    if x < in_min:
-        return out_min
-    elif x > in_max:
-        return out_max
+import subprocess
+import os
 
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+env = os.environ.copy()
+env["DISPLAY"] = ":0"
+env["XAUTHORITY"] = "/home/patrick/.Xauthority"
 
-print(map_value(float(input()), 2, 10, 2, 3.3))
+result = subprocess.run([input()], capture_output=True, text=True, check=True)
+
+print(result)

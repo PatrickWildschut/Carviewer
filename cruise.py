@@ -135,15 +135,15 @@ def cruise_control_screen(carplay):
 
                 # Only update on Press/Unpress
                 currentButtonState = GetButtonPressed()
-                if oldButtonState == currentButtonState:
-                    continue
+                if oldButtonState != currentButtonState:
+                    if currentButtonState:
+                        subprocess.run(["wmctrl", "-r", "Electron", "-b", "add,hidden"])
+                        subprocess.run(["wmctrl", "-a", "Carviewer 98-RS-RV"])
+                    else:
+                        # carplay window
+                        subprocess.run(["wmctrl", "-a", "Electron"])
 
-                if currentButtonState:
-                    subprocess.run(["wmctrl -a 'Carviewer 98-RS-RV'"])
-                else:
-                    subprocess.run(["wmctrl -a 'Carplay.AppImage'"])
-
-                oldButtonState = currentButtonState
+                    oldButtonState = currentButtonState
             else:
                 # Carplay terminated, exit Carplay-cruise control mode
                 reset()
@@ -155,7 +155,7 @@ def cruise_control_screen(carplay):
     pygame.quit()
 
 def cruise_control():
-    global enabled, ledInterval
+    global enabled, ledInterval, buttonLed
 
     if checkPedalsPressed():
         enabled = False
@@ -205,7 +205,7 @@ def calculateNewVoltage():
         if deltaSpeed < -0.05 or deltaSpeed > 0.05:
             currentVoltage += desiredDifference * voltageIntervene
 
-    currentVoltage = max(min(currentVoltage, map_value(math.abs(desiredDifference), 2, 10, 2, 3.3)), minimalVoltage)
+    currentVoltage = max(min(currentVoltage, map_value(abs(desiredDifference), 2, 10, 2, 3.3)), minimalVoltage)
 
 def setDesiredSpeed(value):
     global desiredSpeed
