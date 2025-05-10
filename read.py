@@ -37,7 +37,7 @@ def read_menu():
 
         if selected_layout == "Original":
             layouts.original_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
-                       GetClutch(), GetBrake())
+                       GetClutch(), GetBrake(), GetGear())
         elif selected_layout == "Fancy":
             layouts.fancy_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
@@ -45,7 +45,7 @@ def read_menu():
             layouts.dirt_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
         elif selected_layout == "F1":
-            layouts.futuristic_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
+            layouts.modern_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())   
 
         # Update dashboard

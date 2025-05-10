@@ -45,19 +45,24 @@ def cruise_control_screen(carplay):
                 if (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 220) <= y <= (HEIGHT - 170):
                     enabled = not enabled
                     currentVoltage = GetThrottle() * 2
+                elif (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 120) <= y <= (HEIGHT - 70):
+                    # Current speed button
+                    desiredSpeed = currentSpeed
 
                 # Speed control buttons
                 if 50 <= x <= 140:
                     if 400 <= y <= 450:
                         setDesiredSpeed(desiredSpeed - 1)
                     elif 460 <= y <= 510:
-                        setDesiredSpeed(desiredSpeed - 5)
+                        delta_5 = desiredSpeed % 5
+                        setDesiredSpeed(desiredSpeed - 5 + (5-delta_5 if delta_5 > 2 else -delta_5))
 
                 if WIDTH - 140 <= x <= WIDTH - 50:
                     if 400 <= y <= 450:
                         setDesiredSpeed(desiredSpeed + 1)
                     elif 460 <= y <= 510:
-                        setDesiredSpeed(desiredSpeed + 5)
+                        delta_5 = desiredSpeed % 5
+                        setDesiredSpeed(desiredSpeed + 5 + (5-delta_5 if delta_5 > 2 else -delta_5))
 
         screen.fill(BACKGROUND_COLOR)
 
@@ -94,10 +99,16 @@ def cruise_control_screen(carplay):
         screen.blit(desired_speed_text, (WIDTH // 2 - desired_speed_text.get_width() // 2, 330))
 
         # Cruise Control toggle button
-        cruise_control_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT - 220, 200, 50)
+        cruise_control_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT - 180, 200, 50)
         pygame.draw.rect(screen, BUTTON_COLOR, cruise_control_rect)
         cruise_control_text = font_small.render("Disable Cruise" if enabled else "Enable Cruise", True, BUTTON_TEXT_COLOR)
         screen.blit(cruise_control_text, cruise_control_text.get_rect(center=cruise_control_rect.center))
+
+        # Current speed button
+        current_speed_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT - 120, 200, 50)
+        pygame.draw.rect(screen, BUTTON_COLOR, current_speed_rect)
+        current_speed_text = font_small.render("Current Speed", True, BUTTON_TEXT_COLOR)
+        screen.blit(current_speed_text, current_speed_text.get_rect(center=current_speed_rect.center))
 
         # Vertical Speed Adjustment Buttons
         button_size = (90, 50)

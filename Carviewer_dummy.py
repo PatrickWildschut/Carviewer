@@ -12,6 +12,7 @@ def load_json():
 # Load settings
 settings_json = load_json()
 fps = settings_json["Program"]["fps"]
+minimalVoltage = 0.2
 
 # Initialize Pygame
 pygame.display.init()
@@ -32,7 +33,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 # Screen dimensions
-WIDTH, HEIGHT = 1024, 600
+WIDTH, HEIGHT = 1024, 576
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Carviewer 98-RS-RV")
 
@@ -43,8 +44,9 @@ def GetThrottle() -> float:
     return 1.2
 
 def SetThrottle(value):
+    pass
     # Dummy function: just print the value
-    print(f"SetThrottle called with value: {value}")
+    #print(f"SetThrottle called with value: {value}")
 
 def GetThrottlePercentage() -> int:
     # Simulate a percentage from 0 to 100
@@ -60,25 +62,27 @@ def GetBrake() -> bool:
 
 def GetSpeed():
     # Simulate a speed between 0 and 120 km/h
-    return random.randint(80, 120)
+    return 113
 
 old_rpm = 1000
 def GetRPM():
     global old_rpm
-    old_rpm += 10
+    old_rpm += 1
     return old_rpm
 
 def GetGear():
     return 3
 
 def SetRelays(value):
+    pass
     # Dummy function: just print the relay state
-    print(f"SetRelays called with value: {value}")
+    #print(f"SetRelays called with value: {value}")
 
 def GetButtonPressed():
     # Randomly simulate button pressed
     return False
 
 def SetButtonLed(value):
+    pass
     # Dummy function: print LED state
-    print(f"SetButtonLed called with value: {value}")
+    #print(f"SetButtonLed called with value: {value}")
