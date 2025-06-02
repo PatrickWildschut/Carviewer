@@ -1,10 +1,8 @@
-import subprocess
-import os
+import RPi.GPIO as GPIO
+import time
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(36, GPIO.IN)
 
-env = os.environ.copy()
-env["DISPLAY"] = ":0"
-env["XAUTHORITY"] = "/home/patrick/.Xauthority"
-
-result = subprocess.run([input()], capture_output=True, text=True, check=True)
-
-print(result)
+while True:
+    time.sleep(0.2)
+    print(GPIO.input(36))

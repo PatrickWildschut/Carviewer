@@ -1,13 +1,13 @@
 {
     "Program": {
-        "fps": 60,
+        "fps": 30,
         "version": "0.7",
-        "layout": "DiRT"
+        "layout": "Original"
     },
     "GPIO": {
         "clutch": 29,
         "brake": 31,
-        "speedPWM": 13,
+        "speedPWM": 24,
         "rpmPWM": 12,
         "cruiseButtonLed": 7,
         "cruiseButtonPressed": 11,

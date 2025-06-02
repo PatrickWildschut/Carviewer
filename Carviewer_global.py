@@ -5,6 +5,8 @@ from ADCDACPi import ADCDACPi
 import time
 import pigpio
 import RPi.GPIO as GPIO
+from gpiozero import Button
+import os
 
 def load_json():
     # read json
@@ -149,7 +151,7 @@ def GetGear():
     current_speed = GetSpeed()
     current_rpm = GetRPM()
 
-    if current_rpm < 1000:
+    if current_rpm < 1000 or current_speed == 0:
         return -1
 
     # Calculate RPMs for each gear

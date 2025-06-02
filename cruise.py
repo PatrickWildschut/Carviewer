@@ -42,12 +42,12 @@ def cruise_control_screen(carplay):
                 x, y = event.pos
 
                 # Enable/Disable Cruise Control
-                if (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 220) <= y <= (HEIGHT - 170):
+                if (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 180) <= y <= (HEIGHT - 130):
                     enabled = not enabled
                     currentVoltage = GetThrottle() * 2
                 elif (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 120) <= y <= (HEIGHT - 70):
                     # Current speed button
-                    desiredSpeed = currentSpeed
+                    setDesiredSpeed(currentSpeed)
 
                 # Speed control buttons
                 if 50 <= x <= 140:
@@ -95,7 +95,7 @@ def cruise_control_screen(carplay):
         screen.blit(font_small.render("km/h", True, TEXT_COLOR), (775, 225))
 
         # Desired Speed Text below throttle and speed
-        desired_speed_text = font_large.render(f"Desired: {desiredSpeed} km/h", True, TEXT_COLOR)
+        desired_speed_text = font_large.render(f"Desired: {int(desiredSpeed)} km/h", True, TEXT_COLOR)
         screen.blit(desired_speed_text, (WIDTH // 2 - desired_speed_text.get_width() // 2, 330))
 
         # Cruise Control toggle button
@@ -221,6 +221,7 @@ def calculateNewVoltage():
 def setDesiredSpeed(value):
     global desiredSpeed
     desiredSpeed = max(min(value, maxSpeed), minSpeed)
+    desiredSpeed = int(desiredSpeed) + 0.5
 
 def reset():
     global enabled, currentVoltage, ledInterval, buttonLed

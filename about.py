@@ -1,7 +1,7 @@
 import pygame
 import sys
 from Carviewer_global import *
-
+import os
 # # Initialize Pygame
 # pygame.init()
 
@@ -34,6 +34,10 @@ def about_screen():
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if WIDTH - 150 <= event.pos[0] <= WIDTH - 50 and 50 <= event.pos[1] <= 50 + 30:
+                    # stop pigpio
+                    pi.stop()
+                    os.system("sudo systemctl stop pigpiod &")
+                    # turn off app
                     running = False
 
                 # Check if back button is clicked
