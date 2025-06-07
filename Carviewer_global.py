@@ -174,6 +174,7 @@ def SetRelays(value):
     GPIO.output(relay2_pin, not value)
 
 def GetButtonPressed():
+    return False
     return not GPIO.input(cruiseButtonPressed_pin)
 
 def SetButtonLed(value):

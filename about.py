@@ -33,14 +33,18 @@ def about_screen():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if WIDTH - 150 <= event.pos[0] <= WIDTH - 50 and 50 <= event.pos[1] <= 50 + 30:
+                # exit button
+                if WIDTH - 200 <= event.pos[0] <= WIDTH - 50 and 50 <= event.pos[1] <= 50 + 30:
                     # stop pigpio
                     pi.stop()
                     os.system("sudo systemctl stop pigpiod &")
                     # turn off app
                     running = False
-
-                # Check if back button is clicked
+                elif WIDTH - 200 <= event.pos[0] <= WIDTH - 50 and HEIGHT - 80 <= event.pos[1] <= HEIGHT - 50:
+                    pi.stop()
+                    os.system("sudo systemctl stop pigpiod &")
+                    os.system("shutdown now")
+                # back button
                 elif 50 <= event.pos[0] <= 50 + 200 and 500 <= event.pos[1] <= 500 + 50:
                     return  # Return to main.py
 
@@ -72,11 +76,18 @@ def about_screen():
         screen.blit(copyright_text, (50, 400))  # Increased spacing
 
         # Exit Button
-        exit_button_rect = pygame.Rect(WIDTH - 150, 50, 100, 30)
+        exit_button_rect = pygame.Rect(WIDTH - 200, 50, 150, 30)
         pygame.draw.rect(screen, BUTTON_COLOR, exit_button_rect)
         exit_text = font_small.render("Exit", True, BUTTON_TEXT_COLOR)
         text_rect = exit_text.get_rect(center=exit_button_rect.center)
         screen.blit(exit_text, text_rect)
+
+        # Shutdown Button
+        shutdown_button_rect = pygame.Rect(WIDTH - 200, HEIGHT - 80, 150, 30)
+        pygame.draw.rect(screen, BUTTON_COLOR, shutdown_button_rect)
+        shutdown_text = font_small.render("Shutdown", True, BUTTON_TEXT_COLOR)
+        text_rect = shutdown_text.get_rect(center=shutdown_button_rect.center)
+        screen.blit(shutdown_text, text_rect)
 
         pygame.display.flip()
         clock.tick(30)  # Limit frame rate
