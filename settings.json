@@ -1,7 +1,7 @@
 {
     "Program": {
         "fps": 60,
-        "version": "0.8.1",
+        "version": "0.8.2",
         "layout": "Original"
     },
     "GPIO": {
@@ -10,7 +10,7 @@
         "speedPWM": 24,
         "rpmPWM": 12,
         "cruiseButtonLed": 4,
-        "cruiseButtonPressed": 14,
+        "cruiseButtonPressed": 25,
         "relays": 18,
 
         "max7219_din" : 27,

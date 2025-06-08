@@ -71,7 +71,7 @@ gears = {
 # CLK 11, CS 15, DIN 13
 serial = bitbang(SCLK=max7219_clk, SDA=max7219_din, CE=max7219_cs)
 device = max7219(serial, cascaded=1, rotate=0)
-device.contrast(8)
+device.contrast(255)
 
 def draw_gear(gear):
     pixels = gears[str(gear)]
