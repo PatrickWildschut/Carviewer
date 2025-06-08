@@ -1,17 +1,20 @@
 {
     "Program": {
         "fps": 60,
-        "version": "0.8",
+        "version": "0.8.1",
         "layout": "Original"
     },
     "GPIO": {
-        "clutch": 29,
-        "brake": 33,
+        "clutch": 5,
+        "brake": 13,
         "speedPWM": 24,
         "rpmPWM": 12,
-        "cruiseButtonLed": 7,
-        "cruiseButtonPressed": 11,
-        "relay1": 13,
-        "relay2": 15
+        "cruiseButtonLed": 4,
+        "cruiseButtonPressed": 14,
+        "relays": 18,
+
+        "max7219_din" : 27,
+        "max7219_cs" : 22,
+        "max7219_clk" : 17
     }
 }

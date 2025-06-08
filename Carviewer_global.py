@@ -21,8 +21,11 @@ speed_pin = settings_json["GPIO"]["speedPWM"]
 rpm_pin = settings_json["GPIO"]["rpmPWM"]
 cruiseButtonLed_pin = settings_json["GPIO"]["cruiseButtonLed"]
 cruiseButtonPressed_pin = settings_json["GPIO"]["cruiseButtonPressed"]
-relay1_pin = settings_json["GPIO"]["relay1"]
-relay2_pin = settings_json["GPIO"]["relay2"]
+relay_pin = settings_json["GPIO"]["relays"]
+max7219_din = settings_json["GPIO"]["max7219_din"]
+max7219_cs = settings_json["GPIO"]["max7219_cs"]
+max7219_clk = settings_json["GPIO"]["max7219_clk"]
+
 fps = settings_json["Program"]["fps"]
 
 minimalVoltage = 0.2
@@ -151,7 +154,7 @@ def GetGear():
     current_speed = GetSpeed()
     current_rpm = GetRPM()
 
-    if current_rpm < 1000 or current_speed == 0:
+    if current_rpm < 1000 or current_speed == 0 or GetClutch():
         return -1
 
     # Calculate RPMs for each gear
@@ -163,15 +166,14 @@ def GetGear():
         key=lambda i: abs(calculated_rpms[i] - current_rpm)
     ) + 1
 
-    if best_gear_index == 6 or GetClutch():
+    if best_gear_index == 6:
         best_gear_index = -1
     
     return best_gear_index
 
 def SetRelays(value):
     # needs to be inverted
-    GPIO.output(relay1_pin, not value)
-    GPIO.output(relay2_pin, not value)
+    GPIO.output(relay_pin, not value)
 
 def GetButtonPressed():
     return False

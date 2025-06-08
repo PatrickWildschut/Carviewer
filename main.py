@@ -8,16 +8,20 @@ import read
 
 # Gets called once
 def setup():
-    GPIO.setmode(GPIO.BOARD)
+    GPIO.cleanup()
+    GPIO.setmode(GPIO.BCM)
 
     # Setup pedals
     GPIO.setup(clutch_pin, GPIO.IN)
     GPIO.setup(brake_pin, GPIO.IN)
     GPIO.setup(cruiseButtonPressed_pin, GPIO.IN)
 
-    GPIO.setup(relay1_pin, GPIO.OUT)
-    GPIO.setup(relay2_pin, GPIO.OUT)
+    GPIO.setup(relay_pin, GPIO.OUT)
     GPIO.setup(cruiseButtonLed_pin, GPIO.OUT)
+
+    GPIO.setup(max7219_din, GPIO.OUT)
+    GPIO.setup(max7219_cs, GPIO.OUT)
+    GPIO.setup(max7219_clk, GPIO.OUT)
 
     SetButtonLed(True)
     SetRelays(False)
