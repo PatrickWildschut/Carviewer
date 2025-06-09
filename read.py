@@ -5,7 +5,6 @@ import cruise
 import settings
 import subprocess
 import layouts
-import max7219
 
 from Carviewer_global import *
 
@@ -48,8 +47,6 @@ def read_menu():
         elif selected_layout == "F1":
             layouts.modern_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())   
-
-        max7219.draw_gear(GetGear())
 
         pygame.display.flip()
 

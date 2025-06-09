@@ -33,7 +33,7 @@ def cruise_control_screen(carplay):
         oldSpeed.pop(0)
         currentSpeed = GetSpeed()
         throttle = int((currentVoltage - minimalVoltage) / 3.1 * 100)
-
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False

@@ -5,6 +5,7 @@ import sys
 from Carviewer_global import *
 import intro
 import read
+import threading
 
 # Gets called once
 def setup():
@@ -25,6 +26,10 @@ def setup():
 
     SetButtonLed(True)
     SetRelays(False)
+
+    # MAX7219 gear background update
+    thread = threading.Thread(target=SetMax7219Gear)
+    thread.start()
 
     if len(sys.argv) > 1:
         if sys.argv[1] == "fullscreen":

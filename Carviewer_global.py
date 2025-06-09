@@ -7,6 +7,7 @@ import pigpio
 import RPi.GPIO as GPIO
 from gpiozero import Button
 import os
+import max7219
 
 def load_json():
     # read json
@@ -148,7 +149,7 @@ def GetRPM():
     return 0
 
 # speed multiplication to get RPM
-gears = [150, 75, 52, 43, 34, 25]
+gears = [137, 77, 53, 42, 33, 30]
 
 def GetGear():
     current_speed = GetSpeed()
@@ -176,8 +177,12 @@ def SetRelays(value):
     GPIO.output(relay_pin, not value)
 
 def GetButtonPressed():
-    return False
     return not GPIO.input(cruiseButtonPressed_pin)
 
 def SetButtonLed(value):
     GPIO.output(cruiseButtonLed_pin, value)
+
+def SetMax7219Gear():
+    while True:
+        max7219.draw_gear(GetGear())
+        time.sleep(0.1)
