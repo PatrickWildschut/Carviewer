@@ -23,9 +23,6 @@ rpm_pin = settings_json["GPIO"]["rpmPWM"]
 cruiseButtonLed_pin = settings_json["GPIO"]["cruiseButtonLed"]
 cruiseButtonPressed_pin = settings_json["GPIO"]["cruiseButtonPressed"]
 relay_pin = settings_json["GPIO"]["relays"]
-max7219_din = settings_json["GPIO"]["max7219_din"]
-max7219_cs = settings_json["GPIO"]["max7219_cs"]
-max7219_clk = settings_json["GPIO"]["max7219_clk"]
 
 fps = settings_json["Program"]["fps"]
 
@@ -182,7 +179,14 @@ def GetButtonPressed():
 def SetButtonLed(value):
     GPIO.output(cruiseButtonLed_pin, value)
 
+oldGear = -2
 def SetMax7219Gear():
+    global oldGear
     while True:
-        max7219.draw_gear(GetGear())
+        currentGear = GetGear()
+
+        if currentGear != oldGear:
+            max7219.draw_gear(currentGear)
+            oldGear = currentGear
+
         time.sleep(0.1)

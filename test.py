@@ -1,8 +1,18 @@
-import RPi.GPIO as GPIO
+import i3ipc
 import time
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(36, GPIO.IN)
 
-while True:
-    time.sleep(0.2)
-    print(GPIO.input(36))
+i3 = i3ipc.Connection()
+
+def find_window_by_class(i3, class_name):
+    return next(
+        (w for w in i3.get_tree().leaves() if w.window_class == class_name),
+        None
+    )
+
+sublime = find_window_by_class(i3, "Sublime_text")
+
+time.sleep(5)
+sublime.command("move to scratchpad")
+time.sleep(5)
+sublime.command("scratchpad show")
+sublime.command("fullscreen enable")
