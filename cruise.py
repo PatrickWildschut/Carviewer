@@ -150,25 +150,26 @@ def cruise_control_screen(carplay):
 
         else:
             # Carplay-cruise control mode
+            carviewer = find_window_by_title(i3, "Carviewer 98-RS-RV")
             if carplay.poll() == None:
                 # Carplay still running
 
                 # Only update on Press/Unpress
                 currentButtonState = GetButtonPressed()
                 if oldButtonState != currentButtonState:
-                    electron = find_window_by_title(i3, "React App")
-                    #carviewer = find_window_by_title(i3, "Carviewer 98-RS-RV")
+                    electron = find_window_by_title(i3, "Electron")
 
                     if currentButtonState:
+                        carviewer.command("fullscreen enable")
                         electron.command('move to scratchpad')
                     else:
-                        # carplay window
                         electron.command('scratchpad show')
                         electron.command("fullscreen enable")
 
                     oldButtonState = currentButtonState
             else:
                 # Carplay terminated, exit Carplay-cruise control mode
+                carviewer.command("fullscreen enable")
                 reset()
                 return
 
