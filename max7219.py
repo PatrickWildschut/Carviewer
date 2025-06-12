@@ -2,17 +2,7 @@ from luma.led_matrix.device import max7219
 from luma.core.interface.serial import bitbang
 from luma.core.render import canvas
 from PIL import Image
-
-def load_json():
-    # read json
-    with open("settings.json", "r") as file:
-        return json.load(file)
-
-settings_json = load_json()
-
-max7219_din = settings_json["GPIO"]["max7219_din"]
-max7219_cs = settings_json["GPIO"]["max7219_cs"]
-max7219_clk = settings_json["GPIO"]["max7219_clk"]
+from Carviewer_global import max7219_clk, max7219_din, max7219_cs
 
 # CLK 11, CS 15, DIN 13
 serial = bitbang(SCLK=max7219_clk, SDA=max7219_din, CE=max7219_cs)

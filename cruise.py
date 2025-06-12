@@ -25,9 +25,9 @@ oldButtonState = False
 
 i3 = i3ipc.Connection()
 
-def find_window_by_class(i3, class_name):
+def find_window_by_title(i3, title_name):
     return next(
-        (w for w in i3.get_tree().leaves() if w.window_class == class_name),
+        (w for w in i3.get_tree().leaves() if w.window_title == title_name),
         None
     )
 
@@ -156,8 +156,8 @@ def cruise_control_screen(carplay):
                 # Only update on Press/Unpress
                 currentButtonState = GetButtonPressed()
                 if oldButtonState != currentButtonState:
-                    electron = find_window_by_class(i3, "Electron")
-                    #carviewer = find_window_by_class(i3, "Carviewer 98-RS-RV")
+                    electron = find_window_by_title(i3, "React App")
+                    #carviewer = find_window_by_title(i3, "Carviewer 98-RS-RV")
 
                     if currentButtonState:
                         electron.command('move to scratchpad')
