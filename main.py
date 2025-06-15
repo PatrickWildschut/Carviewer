@@ -2,7 +2,7 @@
 
 import RPi.GPIO as GPIO
 import sys
-from Carviewer_global import *
+from Carviewer_ESP32 import *
 import intro
 import read
 import max7219
@@ -31,6 +31,10 @@ def setup():
     # MAX7219 gear background update
     thread = threading.Thread(target=SetMax7219Gear)
     thread.start()
+
+    # Start serial thread
+    serial_thread = threading.Thread(target=read_serial, daemon=True)
+    serial_thread.start()
 
     if len(sys.argv) > 1:
         if sys.argv[1] == "fullscreen":

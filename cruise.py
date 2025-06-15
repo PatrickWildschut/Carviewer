@@ -4,7 +4,7 @@ import time
 import math
 import subprocess
 import i3ipc
-from Carviewer_global import *
+from Carviewer_ESP32 import *
 
 # Variables
 enabled = False

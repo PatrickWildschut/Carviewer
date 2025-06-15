@@ -1,7 +1,7 @@
 import pygame
 import sys
 import json
-from Carviewer_global import *
+from Carviewer_ESP32 import *
 
 
 def get_json_settings():
