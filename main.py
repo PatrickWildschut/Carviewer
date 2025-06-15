@@ -14,8 +14,8 @@ def setup():
     GPIO.setmode(GPIO.BCM)
 
     # Setup pedals
-    GPIO.setup(clutch_pin, GPIO.IN)
-    GPIO.setup(brake_pin, GPIO.IN)
+    #GPIO.setup(clutch_pin, GPIO.IN)
+    #GPIO.setup(brake_pin, GPIO.IN)
     GPIO.setup(cruiseButtonPressed_pin, GPIO.IN)
 
     GPIO.setup(relay_pin, GPIO.OUT)

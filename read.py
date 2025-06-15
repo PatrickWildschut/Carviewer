@@ -6,7 +6,7 @@ import settings
 import subprocess
 import layouts
 
-from Carviewer_global import *
+from Carviewer_ESP32 import *
 
 settings_json = None
 
