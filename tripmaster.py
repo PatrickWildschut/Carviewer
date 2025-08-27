@@ -1,7 +1,7 @@
 import pygame
 import sys
 import time
-from Carviewer_global import *
+from Carviewer_ESP32 import *
 
 # Variables
 running_trip = False

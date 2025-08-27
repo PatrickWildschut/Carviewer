@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-from Carviewer_global import *
+from Carviewer_ESP32 import *
 
 import about
 import stage

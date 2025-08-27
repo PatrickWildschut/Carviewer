@@ -29,8 +29,8 @@ def setup():
     SetRelays(False)
 
     # MAX7219 gear background update
-    thread = threading.Thread(target=SetMax7219Gear)
-    thread.start()
+    #thread = threading.Thread(target=SetMax7219Gear)
+    #thread.start()
 
     # Start serial thread
     serial_thread = threading.Thread(target=read_serial, daemon=True)

@@ -3,14 +3,15 @@ import json
 import math
 from ADCDACPi import ADCDACPi
 import time
-import pigpio
 import RPi.GPIO as GPIO
 from gpiozero import Button
 import os
 import serial
 import threading
 
-# Shared variables for serial input
+import serial
+
+# Global variables
 serial_brake = False
 serial_clutch = False
 serial_speed = 0.0
@@ -19,27 +20,29 @@ serial_rpm = 0
 def read_serial():
     global serial_brake, serial_clutch, serial_speed, serial_rpm
 
-    ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.01)  # Update to your port
+    ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.01)  # Update port if needed
 
     buffer = ""
     while True:
         if ser.in_waiting > 0:
-            byte = ser.read().decode(errors='ignore')
+            byte = ser.read().decode(errors="ignore")
             if byte == '\n':
                 line = buffer.strip()
                 buffer = ''
                 if line:
                     try:
-                        prefix = line[0]
-                        value = line[1:]
-                        if prefix == 'b':
-                            serial_brake = value == '1'
-                        elif prefix == 'c':
-                            serial_clutch = value == '1'
-                        elif prefix == 's':
-                            serial_speed = float(value)
-                        elif prefix == 'r':
-                            serial_rpm = int(float(value))
+                        if len(line) >= 6:  # Minimum size check
+                            brake_str  = line[-1]     # last char
+                            clutch_str = line[-2]     # 2nd last char
+                            rpm_str    = line[-6:-2]  # 4 chars before clutch/brake
+                            speed_str  = line[:-6]    # everything else at the start
+
+                            serial_speed  = float(speed_str)
+                            serial_rpm    = int(rpm_str)
+                            serial_clutch = (clutch_str == '1')
+                            serial_brake  = (brake_str == '1')
+                        else:
+                            print(f"[Serial Parse Error] Incomplete line: {line}")
                     except Exception as e:
                         print(f"[Serial Parse Error] {line}: {e}")
             elif byte != '\r':
@@ -113,7 +116,7 @@ def GetThrottlePercentage() -> int:
     return value
 
 def GetClutch() -> bool:
-    return serial_clutch
+    return not serial_clutch
 
 def GetBrake() -> bool:
     return serial_brake

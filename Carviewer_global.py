@@ -3,7 +3,7 @@ import json
 import math
 from ADCDACPi import ADCDACPi
 import time
-import pigpio
+
 import RPi.GPIO as GPIO
 from gpiozero import Button
 import os

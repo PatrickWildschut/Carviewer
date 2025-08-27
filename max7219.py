@@ -2,7 +2,7 @@ from luma.led_matrix.device import max7219
 from luma.core.interface.serial import bitbang
 from luma.core.render import canvas
 from PIL import Image
-from Carviewer_global import max7219_clk, max7219_din, max7219_cs
+from Carviewer_ESP32 import max7219_clk, max7219_din, max7219_cs
 
 # CLK 11, CS 15, DIN 13
 serial = bitbang(SCLK=max7219_clk, SDA=max7219_din, CE=max7219_cs)
