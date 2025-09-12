@@ -4,127 +4,146 @@
 #define RPM_AIN     A0    // RPM on analog A0
 #define SPEED_AIN   A1    // Speed on analog A1
 
-// --- Thresholds (tune for each channel) ---
-// Counts = 1023 * V / 5.0   (Uno @ 5V)
-const int RPM_HIGH_CNT     = 640;  // ~3.12 V
-const int RPM_LOW_CNT      = 560;  // ~2.73 V
-const int SPEED_HIGH_CNT   = 640;  // ~3.12 V
-const int SPEED_LOW_CNT    = 560;  // ~2.73 V
+// --- Thresholds ---
+// Counts = 1023 * V / 5.0 (Uno @ 5V)
+// Wider hysteresis to mimic Schmitt behavior
+const int RPM_HIGH_CNT     = 680;  // ~3.32 V
+const int RPM_LOW_CNT      = 520;  // ~2.54 V
+const int SPEED_HIGH_CNT   = 680;
+const int SPEED_LOW_CNT    = 520;
 
-const unsigned long MIN_PULSE_US     = 50;       // ignore tiny glitches
-const unsigned long RPM_TIMEOUT_US   = 125000;  // 1.25 s (no pulse -> 0)
-const unsigned long SPEED_TIMEOUT_US = 125000;   // 125 ms
+// --- Pulse timing ---
+const unsigned long MIN_PULSE_US     = 50;        // Ignore very short pulses
+const unsigned long MAX_PULSE_US     = 1000000UL; // Ignore pulses > 1 sec
+const unsigned long MIN_GLITCH_US    = 100;       // Filter glitch edges < 100 µs
+const unsigned long RPM_TIMEOUT_US   = 1250000;   // 1.25 s = RPM 0
+const unsigned long SPEED_TIMEOUT_US = 125000;    // 125 ms = Speed 0
 
-// --- Channel state machine ---
+// --- Channel state ---
 struct PulseChan {
   uint8_t pin;
   int highCnt;
   int lowCnt;
-  bool  isHigh;
+  bool isHigh;
   unsigned long tRise;
-  unsigned long lastWidth;    // last measured HIGH width (us)
-  unsigned long lastEdgeTime; // last time we saw an edge (for timeout)
-  unsigned long timeout;      // per-channel timeout
-  bool  newWidth;             // flag: new pulse captured since last read
+  unsigned long lastWidth;
+  unsigned long lastEdgeTime;
+  unsigned long timeout;
+  bool newWidth;
 };
 
 PulseChan rpmCh   = { RPM_AIN,   RPM_HIGH_CNT,   RPM_LOW_CNT,   false, 0, 0, 0, RPM_TIMEOUT_US,   false };
 PulseChan speedCh = { SPEED_AIN, SPEED_HIGH_CNT, SPEED_LOW_CNT, false, 0, 0, 0, SPEED_TIMEOUT_US, false };
 
-// Fast, non-blocking update: sample once and update state machine
+// --- Analog read with averaging ---
+int analogReadAvg(uint8_t pin, uint8_t samples = 4) {
+  long sum = 0;
+  for (uint8_t i = 0; i < samples; i++) {
+    sum += analogRead(pin);
+  }
+  return sum / samples;
+}
+
+// --- Update channel: pigpio-style edge detection ---
 inline void updateChannel(PulseChan &ch) {
-  int s = analogRead(ch.pin);
+  int s = analogReadAvg(ch.pin, 4);  // 4-sample average
   unsigned long now = micros();
 
   if (!ch.isHigh) {
-    // Waiting for rising crossing
+    // Wait for rising edge
     if (s >= ch.highCnt) {
-      ch.isHigh = true;
-      ch.tRise = now;
-      ch.lastEdgeTime = now;
+      unsigned long delta = now - ch.lastEdgeTime;
+      if (delta >= MIN_GLITCH_US) {
+        ch.isHigh = true;
+        ch.tRise = now;
+        ch.lastEdgeTime = now;
+      }
     } else {
-      // still low; check timeout → mark width=0 if stale
       if (ch.timeout && (now - ch.lastEdgeTime > ch.timeout)) {
         ch.lastWidth = 0;
-        ch.newWidth = true; // report 0 once
+        ch.newWidth = true;
         ch.lastEdgeTime = now;
       }
     }
   } else {
-    // Currently high: waiting for falling crossing
+    // Wait for falling edge
     if (s <= ch.lowCnt) {
-      unsigned long w = now - ch.tRise;
-      if (w >= MIN_PULSE_US) {
-        ch.lastWidth = w;
-        ch.newWidth = true;
+      unsigned long delta = now - ch.lastEdgeTime;
+      if (delta >= MIN_GLITCH_US) {
+        unsigned long w = now - ch.tRise;
+        if (w >= MIN_PULSE_US && w <= MAX_PULSE_US) {
+          ch.lastWidth = w;
+          ch.newWidth = true;
+        }
+        ch.isHigh = false;
+        ch.lastEdgeTime = now;
       }
-      ch.isHigh = false;
-      ch.lastEdgeTime = now;
     } else {
-      // still high; keep alive to avoid false timeout
       ch.lastEdgeTime = now;
     }
   }
 }
 
-// Convert captured widths to your outputs (mirrors your original math)
+// --- Convert pulse widths ---
 inline float widthToRPM(unsigned long widthUs) {
   if (!widthUs) return 0.0f;
   float periodSec = widthUs / 1000000.0f;
-  if (periodSec <= 0) return 0.0f;
   return (1.0f / periodSec) * 58.0f;
 }
 
 inline float widthToSpeed(unsigned long widthUs) {
   if (!widthUs) return 0.0f;
-  float duration = widthUs / 10000.0f; // keep your original scaling path
-  if (duration == 0.0f) return 0.0f;
+  float duration = widthUs / 10000.0f;
   return (1.0f / duration) * 36.0f;
 }
 
+// --- Setup ---
 void setup() {
   Serial.begin(115200);
   pinMode(BRAKE_PIN,  INPUT);
   pinMode(CLUTCH_PIN, INPUT);
 
-  // Speed up ADC: prescaler /16 (~13 µs per analogRead)
-  // (Default is /128 ≈ 104 µs; /8 is faster but noisier—try /16 first.)
-  ADCSRA = (ADCSRA & 0xF8) | 0x04; // 0x04 -> /16
+  // Faster ADC (prescaler /16 → ~13us per read)
+  ADCSRA = (ADCSRA & 0xF8) | 0x04;
 
-  rpmCh.lastEdgeTime   = micros();
+  rpmCh.lastEdgeTime = micros();
   speedCh.lastEdgeTime = rpmCh.lastEdgeTime;
 }
 
+// --- Main loop ---
 void loop() {
-  // Update both channels every loop (non-blocking, just one sample each)
   updateChannel(rpmCh);
   updateChannel(speedCh);
 
   static float rpm = 0.0f, speed = 0.0f;
 
-  // If we captured a new pulse width, update the value
+  // --- If new pulse captured, convert ---
   if (rpmCh.newWidth) {
-    rpm = widthToRPM(rpmCh.lastWidth);
+    float newRpm = widthToRPM(rpmCh.lastWidth);
+    rpm = rpm * 0.8f + newRpm * 0.2f;  // smooth with alpha = 0.2
     rpmCh.newWidth = false;
   }
+
   if (speedCh.newWidth) {
-    speed = widthToSpeed(speedCh.lastWidth);
+    float newSpeed = widthToSpeed(speedCh.lastWidth);
+    speed = speed * 0.8f + newSpeed * 0.2f;
     speedCh.newWidth = false;
   }
 
+  // --- Read clutch and brake states ---
   bool clutch = digitalRead(CLUTCH_PIN);
   bool brake  = digitalRead(BRAKE_PIN);
 
-  // Throttle prints to, say, 50 Hz
+  // --- Throttle print to 50 Hz (20 ms) ---
   static unsigned long nextPrint = 0;
   unsigned long now = micros();
   if ((long)(now - nextPrint) >= 0) {
-    nextPrint = now + 20000UL; // 20 ms
+    nextPrint = now + 20000UL;
 
     unsigned int rpm_u = (rpm < 0) ? 0u : (rpm > 9999 ? 9999u : (unsigned int)lroundf(rpm));
 
     char speedStr[8];
-    dtostrf(speed, 5, 1, speedStr);
+    dtostrf(speed, 5, 1, speedStr);  // format float
     for (int i = 0; i < 5; i++) { if (speedStr[i] == ' ') speedStr[i] = '0'; else break; }
 
     char buffer[20];
