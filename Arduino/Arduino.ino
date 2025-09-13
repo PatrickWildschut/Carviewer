@@ -88,13 +88,13 @@ inline void updateChannel(PulseChan &ch) {
 inline float widthToRPM(unsigned long widthUs) {
   if (!widthUs) return 0.0f;
   float periodSec = widthUs / 1000000.0f;
-  return (1.0f / periodSec) * 58.0f;
+  return (1.0f / periodSec) * 56.0f;
 }
 
 inline float widthToSpeed(unsigned long widthUs) {
   if (!widthUs) return 0.0f;
   float duration = widthUs / 10000.0f;
-  return (1.0f / duration) * 36.0f;
+  return (1.0f / duration) * 37.0f;
 }
 
 // --- Setup ---

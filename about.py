@@ -35,14 +35,9 @@ def about_screen():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # exit button
                 if WIDTH - 200 <= event.pos[0] <= WIDTH - 50 and 50 <= event.pos[1] <= 50 + 30:
-                    # stop pigpio
-                    pi.stop()
-                    os.system("sudo systemctl stop pigpiod &")
                     # turn off app
                     running = False
                 elif WIDTH - 200 <= event.pos[0] <= WIDTH - 50 and HEIGHT - 80 <= event.pos[1] <= HEIGHT - 50:
-                    pi.stop()
-                    os.system("sudo systemctl stop pigpiod &")
                     os.system("shutdown now")
                 # back button
                 elif 50 <= event.pos[0] <= 50 + 200 and 500 <= event.pos[1] <= 500 + 50:

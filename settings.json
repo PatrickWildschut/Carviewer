@@ -1,7 +1,7 @@
 {
     "Program": {
         "fps": 60,
-        "version": "0.8.6",
+        "version": "0.8.7",
         "layout": "Original"
     },
     "GPIO": {
