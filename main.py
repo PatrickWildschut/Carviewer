@@ -5,7 +5,7 @@ import sys
 from Carviewer_ESP32 import *
 import intro
 import read
-import max7219
+#import max7219
 import threading
 
 # Gets called once
@@ -49,17 +49,17 @@ def main():
 
     read.read_menu()
 
-oldGear = -2
-def SetMax7219Gear():
-    global oldGear
-    while True:
-        currentGear = GetGear()
-
-        if currentGear != oldGear:
-            max7219.draw_gear(currentGear)
-            oldGear = currentGear
-
-        time.sleep(0.1)
+#oldGear = -2
+#def SetMax7219Gear():
+#    global oldGear
+#    while True:
+#        currentGear = GetGear()
+#
+#        if currentGear != oldGear:
+#            max7219.draw_gear(currentGear)
+#            oldGear = currentGear
+#
+#        time.sleep(0.1)
 
 if __name__ == "__main__":
     main()

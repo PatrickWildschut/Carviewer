@@ -3,7 +3,6 @@ import sys
 import time
 import math
 import subprocess
-import i3ipc
 from Carviewer_ESP32 import *
 
 # Variables
@@ -22,14 +21,6 @@ currentSpeed = 0
 ledInterval = 0
 buttonLed = True
 oldButtonState = False
-
-i3 = i3ipc.Connection()
-
-def find_window_by_title(i3, title_name):
-    return next(
-        (w for w in i3.get_tree().leaves() if w.window_title == title_name),
-        None
-    )
 
 def cruise_control_screen(carplay):
     global enabled, oldSpeed, currentSpeed, desiredSpeed, currentVoltage, oldButtonState
@@ -150,21 +141,23 @@ def cruise_control_screen(carplay):
 
         else:
             # Carplay-cruise control mode
-            carviewer = find_window_by_title(i3, "Carviewer 98-RS-RV")
+            #carviewer = find_window_by_title(i3, "Carviewer 98-RS-RV")
             if carplay.poll() == None:
                 # Carplay still running
 
                 # Only update on Press/Unpress
                 currentButtonState = GetButtonPressed()
                 if oldButtonState != currentButtonState:
-                    electron = find_window_by_title(i3, "Electron")
+                    #electron = find_window_by_title(i3, "Electron")
 
                     if currentButtonState:
-                        carviewer.command("fullscreen enable")
-                        electron.command('move to scratchpad')
+                       pass
+                        #carviewer.command("fullscreen enable")
+                        #electron.command('move to scratchpad')
                     else:
-                        electron.command('scratchpad show')
-                        electron.command("fullscreen enable")
+                       pass
+                        #electron.command('scratchpad show')
+                        #electron.command("fullscreen enable")
 
                     oldButtonState = currentButtonState
             else:

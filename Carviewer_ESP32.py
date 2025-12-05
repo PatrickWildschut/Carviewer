@@ -17,6 +17,7 @@ serial_clutch = False
 serial_speed = 0.0
 serial_rpm = 0
 
+current_gear = -1
 def read_serial():
     global serial_brake, serial_clutch, serial_speed, serial_rpm
 
@@ -120,21 +121,26 @@ def GetClutch() -> bool:
 
 def GetBrake() -> bool:
     return serial_brake
-
+gears = [137,77,53,42,33,30]
 def GetSpeed():
-    return serial_speed
+    gear = CalculateGear()
+    if serial_speed < 30 or gear == -1:
+        return serial_speed
+
+    return GetRPM() / gears[gear-1]
 
 def GetRPM():
     return serial_rpm
 
 # speed multiplication to get RPM
-gears = [137, 77, 53, 42, 33, 30]
 
-def GetGear():
-    current_speed = GetSpeed()
-    current_rpm = GetRPM()
+def CalculateGear():
+    global current_gear
+    current_speed = serial_speed
+    current_rpm = serial_rpm
 
     if current_rpm < 1000 or current_speed == 0 or GetClutch():
+        current_gear = -1
         return -1
 
     # Calculate RPMs for each gear
@@ -148,8 +154,13 @@ def GetGear():
 
     if best_gear_index == 6:
         best_gear_index = -1
-    
+
+    current_gear = best_gear_index
+
     return best_gear_index
+
+def GetGear():
+    return current_gear
 
 def SetRelays(value):
     # needs to be inverted

@@ -8,9 +8,9 @@
 // Counts = 1023 * V / 5.0 (Uno @ 5V)
 // Wider hysteresis to mimic Schmitt behavior
 const int RPM_HIGH_CNT     = 680;  // ~3.32 V
-const int RPM_LOW_CNT      = 520;  // ~2.54 V
+const int RPM_LOW_CNT      = 10;  // ~2.54 V
 const int SPEED_HIGH_CNT   = 680;
-const int SPEED_LOW_CNT    = 520;
+const int SPEED_LOW_CNT    = 10;
 
 // --- Pulse timing ---
 const unsigned long MIN_PULSE_US     = 50;        // Ignore very short pulses
@@ -46,7 +46,7 @@ int analogReadAvg(uint8_t pin, uint8_t samples = 4) {
 
 // --- Update channel: pigpio-style edge detection ---
 inline void updateChannel(PulseChan &ch) {
-  int s = analogReadAvg(ch.pin, 4);  // 4-sample average
+  int s = analogReadAvg(ch.pin, 1);  // 4-sample average
   unsigned long now = micros();
 
   if (!ch.isHigh) {
@@ -88,7 +88,8 @@ inline void updateChannel(PulseChan &ch) {
 inline float widthToRPM(unsigned long widthUs) {
   if (!widthUs) return 0.0f;
   float periodSec = widthUs / 1000000.0f;
-  return (1.0f / periodSec) * 56.0f;
+  float value = (1.0f / periodSec) * 56.0f;
+  return (value * 1.087) - (0.0000472 * pow(value, 2));
 }
 
 inline float widthToSpeed(unsigned long widthUs) {
