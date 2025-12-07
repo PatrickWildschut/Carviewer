@@ -48,9 +48,18 @@ def SetThrottle(value):
     # Dummy function: just print the value
     #print(f"SetThrottle called with value: {value}")
 
+last_throttle = 0
 def GetThrottlePercentage() -> int:
-    # Simulate a percentage from 0 to 100
-    return random.randint(0, 100)
+    global last_throttle
+
+    # Read raw throttle percentage from ADC
+    raw_value = math.floor(random.randint(0,100))
+    raw_value = max(0, min(100, raw_value))  # Clamp to 0–100%
+
+    # Apply exponential moving average
+    last_throttle = last_throttle + 0.2 * (raw_value - last_throttle)
+
+    return int(last_throttle)
 
 def GetClutch() -> bool:
     # Randomly simulate clutch being pressed or not
@@ -60,18 +69,21 @@ def GetBrake() -> bool:
     # Randomly simulate brake being pressed or not
     return False
 
-def GetSpeed():
-    # Simulate a speed between 0 and 120 km/h
-    return 113
+gears = [137,77,53,42,33,30]
 
-old_rpm = 1000
+old_rpm = 5000
+
+def GetSpeed():
+    global old_rpm
+    return old_rpm / 53
+
 def GetRPM():
     global old_rpm
     old_rpm += 1
     return old_rpm
 
 def GetGear():
-    return 3
+    return 5
 
 def SetRelays(value):
     pass

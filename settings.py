@@ -14,7 +14,7 @@ def get_json_settings():
 def settings_menu():
     running = True
     fps_options = [20, 30, 40, 50, 60]
-    layout_options = ["Original", "Fancy", "DiRT", "F1"]
+    layout_options = ["Original", "Fancy", "DiRT", "Modern"]
     selected_layout, selected_fps = get_json_settings()
 
     clock = pygame.time.Clock()

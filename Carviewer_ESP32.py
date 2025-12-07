@@ -106,15 +106,19 @@ def SetThrottle(value):
 
     adc.set_dac_voltage(1, value)
 
+last_throttle = 0
+
 def GetThrottlePercentage() -> int:
-    value = math.floor((adc.read_adc_voltage(1, 0) / 1.4 - 0.1) * 100)
+    global last_throttle
 
-    if value > 100:
-        return 100
-    elif value < 0:
-        return 0
+    # Read raw throttle percentage from ADC
+    raw_value = math.floor((adc.read_adc_voltage(1, 0) / 1.2 - 0.1) * 100)
+    raw_value = max(0, min(100, raw_value))  # Clamp to 0–100%
 
-    return value
+    # Apply exponential moving average
+    last_throttle = last_throttle + 0.2 * (raw_value - last_throttle)
+
+    return int(last_throttle)
 
 def GetClutch() -> bool:
     return not serial_clutch

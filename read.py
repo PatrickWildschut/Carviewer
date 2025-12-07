@@ -44,7 +44,7 @@ def read_menu():
         elif selected_layout == "DiRT":
             layouts.dirt_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
-        elif selected_layout == "F1":
+        elif selected_layout == "Modern":
             layouts.modern_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())   
 
@@ -65,7 +65,7 @@ def fade_effect():
     fade_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
     alpha = 0
 
-    while alpha < 180:  # Fade in effect
+    while alpha < 200:  # Fade in effect
         fade_surface.fill((30, 30, 30, alpha))
         screen.blit(fade_surface, (0, 0))
         pygame.display.flip()
@@ -82,11 +82,22 @@ def fade_effect():
 
     pygame.display.flip()
 
+    time.sleep(1)
+
+    carplay_text = font_oac.render("Switching to Cruise Control", True, TEXT_COLOR)
+    text_rect = carplay_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
+    screen.blit(carplay_text, text_rect)
+    pygame.display.flip()
+
+    time.sleep(3)
+
 # Function for Apple Carplay action
 def apple_carplay():
-    fade_effect()
+
     carplay = subprocess.Popen(['./Carplay.AppImage'])
-    time.sleep(5)
+
+    fade_effect()
+        
     cruise.cruise_control_screen(carplay)
     #subprocess.run(["./Carplay.AppImage"])
 

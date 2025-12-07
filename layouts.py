@@ -1,6 +1,6 @@
 import pygame
 import math
-from Carviewer_dummy import *
+from Carviewer_ESP32 import *
 
 
 # Function to draw dashboard
@@ -32,8 +32,8 @@ def original_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear
     rpm_label = font_super_large.render(str(gear) if gear != -1 else "N", True, TEXT_COLOR if rpm < 4500 else RED)
     screen.blit(rpm_label, (WIDTH // 2 - rpm_label.get_width() // 2, 475))
 
-    throttle_circle_radius = 100
-    pygame.draw.circle(screen, TEXT_COLOR, (300, 200), throttle_circle_radius, 3)
+    rpm_circle_radius = 100
+    pygame.draw.circle(screen, TEXT_COLOR, (300, 200), rpm_circle_radius, 3)
     pygame.draw.arc(screen, TEXT_COLOR, (200, 100, 200, 200), 3 * math.pi / 2 - (rpm / 6000) * 2 * math.pi, 3 * math.pi / 2, 10)
 
 
@@ -75,12 +75,6 @@ def original_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear
     screen.blit(brake_label, (550, 375))
     brake_text = font_small.render("Pressed" if brake_pressed else "Released", True, RED if brake_pressed else GREEN)
     screen.blit(brake_text, (800, 375))
-
-    # # RPM test
-    # rpm_label = font_small.render("RPM", True, TEXT_COLOR)
-    # screen.blit(rpm_label, (420, 475))
-    # rpm_text = font_small.render(str(rpm), True, RED if rpm > 4500 else TEXT_COLOR)
-    # screen.blit(rpm_text, (550, 475))
     
     # Draw horizontal lines
     pygame.draw.line(screen, TEXT_COLOR, (50, 330), (950, 330), 2)
@@ -302,71 +296,138 @@ def dirt_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     version_text = font_small.render(f"Version: {settings_json['Program']['version']}", True, TEXT_COLOR)
     screen.blit(version_text, (WIDTH // 2 - version_text.get_width() // 2, HEIGHT - 50))
 
-
 def modern_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     screen.fill(BACKGROUND_COLOR)
 
-    # --- Top HUD Bar ---
-    title = font_large.render("Ford Fiesta MK6 Sport", True, TEXT_COLOR)
-    screen.blit(title, (40, 20))
+    # --- Title ---
+    title_text = font_large.render("Ford Fiesta MK6 Sport", True, TEXT_COLOR)
+    screen.blit(title_text, (50, 50))
 
-    tools_button = pygame.Rect(864, 20, 120, 30)
-    pygame.draw.rect(screen, BUTTON_COLOR, tools_button, border_radius=10)
+    # --- Tools Button ---
+    tools_button_rect = pygame.Rect(WIDTH - 150, 50, 100, 30, border_radius=10)
+    pygame.draw.rect(screen, BUTTON_COLOR, tools_button_rect)
     tools_text = font_small.render("Tools", True, BUTTON_TEXT_COLOR)
-    screen.blit(tools_text, tools_text.get_rect(center=tools_button.center))
+    screen.blit(tools_text, tools_text.get_rect(center=tools_button_rect.center))
 
-    # --- RPM Bar (Left Section) ---
-    rpm_label = font_small.render("Engine RPM", True, TEXT_COLOR)
-    screen.blit(rpm_label, (40, 100))
+    # ============================================================
+    #                    RPM DIAL (LEFT)
+    # ============================================================
 
-    rpm_bar_x = 40
-    rpm_bar_y = 135
-    rpm_bar_width = 360
-    rpm_bar_height = 30
-    rpm_ratio = min(rpm / 6000, 1.0)
+    rpm_center = (300, 250)
+    rpm_radius = 100
 
-    pygame.draw.rect(screen, TEXT_COLOR, (rpm_bar_x, rpm_bar_y, rpm_bar_width, rpm_bar_height), 2)
-    pygame.draw.rect(screen, GREEN if rpm < 4500 else RED,
-                     (rpm_bar_x, rpm_bar_y, rpm_bar_width * rpm_ratio, rpm_bar_height))
+    # Background disc
+    pygame.draw.circle(screen, (40, 40, 40), rpm_center, rpm_radius)
+    pygame.draw.circle(screen, (90, 90, 90), rpm_center, rpm_radius, 4)
 
-    rpm_text = font_large.render(f"{rpm} RPM", True, TEXT_COLOR)
-    screen.blit(rpm_text, (rpm_bar_x, rpm_bar_y + 40))
+    # RPM arc
+    arc_color = RED if rpm > 5000 else TEXT_COLOR
+    start_angle = 3 * math.pi / 2
+    end_angle = start_angle - (rpm / 6000) * 2 * math.pi
+    pygame.draw.arc(screen, arc_color,
+                    (rpm_center[0]-rpm_radius, rpm_center[1]-rpm_radius,
+                     rpm_radius*2, rpm_radius*2),
+                    end_angle, start_angle, 12)
 
-    # --- Speed and Gear (Center) ---
+    # RPM value
+    rpm_text = font_large.render(str(int(rpm)), True, TEXT_COLOR)
+    screen.blit(rpm_text, rpm_text.get_rect(center=rpm_center))
+
+    rpm_label = font_small.render("RPM", True, TEXT_COLOR)
+    screen.blit(rpm_label, (rpm_center[0] - rpm_label.get_width()//2, rpm_center[1] + 60))
+
+    # ============================================================
+    #                    SPEED METER (RIGHT)
+    # ============================================================
+
+    speed_center = (WIDTH - 250, 250)
+    speed_radius = 100
+
+    # Background circle
+    pygame.draw.circle(screen, (40, 40, 40), speed_center, speed_radius)
+    pygame.draw.circle(screen, (90, 90, 90), speed_center, speed_radius, 4)
+
+    speed_color = RED if speed > 105 else TEXT_COLOR
+
+    pygame.draw.arc(screen, speed_color,
+                    (speed_center[0]-speed_radius, speed_center[1]-speed_radius,
+                     speed_radius*2, speed_radius*2),
+                    start_angle - (speed/200)*2*math.pi, start_angle, 12)
+
+    speed_text = font_large.render(str(int(speed)), True, speed_color)
+    screen.blit(speed_text, speed_text.get_rect(center=speed_center))
+
+    kmh_text = font_small.render("km/h", True, TEXT_COLOR)
+    screen.blit(kmh_text, (speed_center[0] - kmh_text.get_width()//2, speed_center[1] + 60))
+
+    # ============================================================
+    #                    GEAR INDICATOR (CENTER CIRCLE)
+    # ============================================================
+
+    gear_center = (WIDTH//2, HEIGHT//2 + 40)
+    gear_radius = 65
+
+    # Stylish double ring
+    pygame.draw.circle(screen, (70, 70, 70), gear_center, gear_radius)
+    pygame.draw.circle(screen, (120, 120, 120), gear_center, gear_radius, 4)
+    pygame.draw.circle(screen, (40, 40, 40), gear_center, gear_radius - 8)
+
+    # Gear color logic
+    if rpm >= 1250:
+        gear_color = (0, 200, 0)     # green for good RPM range
+    else:
+        gear_color = TEXT_COLOR      # normal
+
     gear_str = str(gear) if gear != -1 else "N"
-    gear_text = font_large.render(f"Gear: {gear_str}", True, TEXT_COLOR)
-    screen.blit(gear_text, (460, 130))
+    gear_text = font_super_large.render(gear_str, True, gear_color)
+    screen.blit(gear_text, gear_text.get_rect(center=gear_center))
 
-    speed_text = font_super_large.render(str(int(speed)), True, RED if speed > 105 else TEXT_COLOR)
-    speed_label = font_large.render("km/h", True, TEXT_COLOR)
-    screen.blit(speed_text, (512 - speed_text.get_width() // 2, 200))
-    screen.blit(speed_label, (512 - speed_label.get_width() // 2, 275))
+    # ============================================================
+    #             THROTTLE, CLUTCH & BRAKE INDICATORS
+    # ============================================================
 
-    # --- Indicators (Right Side) ---
-    indicator_x = 700
-    indicator_y = 130
+    # --- Throttle Bar ---
+    throttle_x = 50
+    throttle_y = 400
+    throttle_width = 200
 
-    clutch_box = pygame.Rect(indicator_x, indicator_y, 260, 55)
-    pygame.draw.rect(screen, RED if clutch_pressed else GREEN, clutch_box, border_radius=8)
-    clutch_text = font_small.render(f"🦶 Clutch: {'Pressed' if clutch_pressed else 'Released'}", True, BUTTON_TEXT_COLOR)
-    screen.blit(clutch_text, clutch_text.get_rect(center=clutch_box.center))
+    pygame.draw.rect(screen, (80, 80, 80), (throttle_x, throttle_y, throttle_width, 25), border_radius=6)
+    pygame.draw.rect(screen, (0, 180, 0), (throttle_x, throttle_y,
+                                           throttle_width * (throttle/100), 25),
+                     border_radius=6)
 
-    brake_box = pygame.Rect(indicator_x, indicator_y + 80, 260, 55)
-    pygame.draw.rect(screen, RED if brake_pressed else GREEN, brake_box, border_radius=8)
-    brake_text = font_small.render(f"🛑 Brake: {'Pressed' if brake_pressed else 'Released'}", True, BUTTON_TEXT_COLOR)
-    screen.blit(brake_text, brake_text.get_rect(center=brake_box.center))
+    throttle_label = font_small.render("Throttle", True, TEXT_COLOR)
+    screen.blit(throttle_label, (throttle_x + throttle_width//2 - throttle_label.get_width()//2, throttle_y + 32))
 
-    # --- Bottom Controls (spaced further down) ---
-    # Apple CarPlay
-    pygame.draw.rect(screen, BUTTON_COLOR, (100, 500, 200, 55), border_radius=10)
+    # --- Clutch Indicator ---
+    clutch_color = RED if clutch_pressed else GREEN
+    clutch_text = font_small.render("Clutch", True, TEXT_COLOR)
+    screen.blit(clutch_text, (WIDTH - 300, 370))
+    pygame.draw.rect(screen, clutch_color, (WIDTH - 300, 400, 120, 25), border_radius=6)
+
+    # --- Brake Indicator ---
+    brake_color = RED if brake_pressed else GREEN
+    brake_text = font_small.render("Brake", True, TEXT_COLOR)
+    screen.blit(brake_text, (WIDTH - 150, 370))
+    pygame.draw.rect(screen, brake_color, (WIDTH - 150, 400, 120, 25), border_radius=6)
+
+    # ============================================================
+    #                       BOTTOM BUTTONS
+    # ============================================================
+
+    button_width = 200
+    button_height = 50
+
+    # CarPlay
+    pygame.draw.rect(screen, BUTTON_COLOR, (50, 500, button_width, button_height), border_radius=10)
     carplay_text = font_small.render("Apple CarPlay", True, BUTTON_TEXT_COLOR)
-    screen.blit(carplay_text, carplay_text.get_rect(center=(200, 527)))
+    screen.blit(carplay_text, carplay_text.get_rect(center=(50 + button_width//2, 500+button_height//2)))
 
     # Settings
-    pygame.draw.rect(screen, BUTTON_COLOR, (724, 500, 200, 55), border_radius=10)
+    pygame.draw.rect(screen, BUTTON_COLOR, (WIDTH - 50 - button_width, 500, button_width, button_height), border_radius=10)
     settings_text = font_small.render("Settings", True, BUTTON_TEXT_COLOR)
-    screen.blit(settings_text, settings_text.get_rect(center=(824, 527)))
+    screen.blit(settings_text, settings_text.get_rect(center=(WIDTH - 50 - button_width//2, 500+button_height//2)))
 
-    # --- Version Info (bottom center) ---
+    # Version
     version_text = font_small.render(f"Version: {settings_json['Program']['version']}", True, TEXT_COLOR)
-    screen.blit(version_text, (512 - version_text.get_width() // 2, 560))
+    screen.blit(version_text, (WIDTH//2 - version_text.get_width()//2, 526))
