@@ -16,7 +16,7 @@ const int SPEED_LOW_CNT    = 10;
 const unsigned long MIN_PULSE_US     = 50;        // Ignore very short pulses
 const unsigned long MAX_PULSE_US     = 1000000UL; // Ignore pulses > 1 sec
 const unsigned long MIN_GLITCH_US    = 100;       // Filter glitch edges < 100 µs
-const unsigned long RPM_TIMEOUT_US   = 1250000;   // 1.25 s = RPM 0
+const unsigned long RPM_TIMEOUT_US   = 125000;   // 1.25 s = RPM 0
 const unsigned long SPEED_TIMEOUT_US = 125000;    // 125 ms = Speed 0
 
 // --- Channel state ---
@@ -36,7 +36,7 @@ PulseChan rpmCh   = { RPM_AIN,   RPM_HIGH_CNT,   RPM_LOW_CNT,   false, 0, 0, 0, 
 PulseChan speedCh = { SPEED_AIN, SPEED_HIGH_CNT, SPEED_LOW_CNT, false, 0, 0, 0, SPEED_TIMEOUT_US, false };
 
 // --- Analog read with averaging ---
-int analogReadAvg(uint8_t pin, uint8_t samples = 4) {
+int analogReadAvg(uint8_t pin, uint8_t samples = 1) {
   long sum = 0;
   for (uint8_t i = 0; i < samples; i++) {
     sum += analogRead(pin);
@@ -46,7 +46,7 @@ int analogReadAvg(uint8_t pin, uint8_t samples = 4) {
 
 // --- Update channel: pigpio-style edge detection ---
 inline void updateChannel(PulseChan &ch) {
-  int s = analogReadAvg(ch.pin, 1);  // 4-sample average
+  int s = analogReadAvg(ch.pin, 1);
   unsigned long now = micros();
 
   if (!ch.isHigh) {
@@ -118,17 +118,26 @@ void loop() {
 
   static float rpm = 0.0f, speed = 0.0f;
 
-  // --- If new pulse captured, convert ---
   if (rpmCh.newWidth) {
     float newRpm = widthToRPM(rpmCh.lastWidth);
     rpm = rpm * 0.8f + newRpm * 0.2f;  // smooth with alpha = 0.2
     rpmCh.newWidth = false;
+  } else {
+    // If no new pulse for longer than timeout, set RPM to 0
+    if (now - rpmCh.lastEdgeTime > rpmCh.timeout) {
+      rpm = 0.0f;
+    }
   }
-
+  
   if (speedCh.newWidth) {
     float newSpeed = widthToSpeed(speedCh.lastWidth);
     speed = speed * 0.8f + newSpeed * 0.2f;
     speedCh.newWidth = false;
+  } else {
+    // If no new pulse for longer than timeout, set speed to 0
+    if (now - speedCh.lastEdgeTime > speedCh.timeout) {
+      speed = 0.0f;
+    }
   }
 
   // --- Read clutch and brake states ---
