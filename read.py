@@ -18,6 +18,9 @@ def read_menu():
     clock = pygame.time.Clock()
     running = True
 
+    layout_names = ["Original", "Fancy", "DiRT", "Modern"]
+    layout_current = -1
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -35,16 +38,16 @@ def read_menu():
 
         selected_layout = settings_json["Program"]["layout"]
 
-        if selected_layout == "Original":
+        if selected_layout == layout_names[0]:
             layouts.original_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
-        elif selected_layout == "Fancy":
+        elif selected_layout == layout_names[1]:
             layouts.fancy_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
-        elif selected_layout == "DiRT":
+        elif selected_layout == layout_names[2]:
             layouts.dirt_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
-        elif selected_layout == "Modern":
+        elif selected_layout == layout_names[3]:
             layouts.modern_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())   
 

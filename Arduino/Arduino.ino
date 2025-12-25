@@ -3,6 +3,7 @@
 #define CLUTCH_PIN  10
 #define RPM_AIN     A0    // RPM on analog A0
 #define SPEED_AIN   A1    // Speed on analog A1
+#define INFO_BUTTON_AIN A2
 
 // --- Thresholds ---
 // Counts = 1023 * V / 5.0 (Uno @ 5V)
@@ -103,6 +104,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(BRAKE_PIN,  INPUT);
   pinMode(CLUTCH_PIN, INPUT);
+  
+  //pinMode(INFO_BUTTON_AIN, INPUT);
 
   // Faster ADC (prescaler /16 → ~13us per read)
   ADCSRA = (ADCSRA & 0xF8) | 0x04;
@@ -122,27 +125,19 @@ void loop() {
     float newRpm = widthToRPM(rpmCh.lastWidth);
     rpm = rpm * 0.8f + newRpm * 0.2f;  // smooth with alpha = 0.2
     rpmCh.newWidth = false;
-  } else {
-    // If no new pulse for longer than timeout, set RPM to 0
-    if (now - rpmCh.lastEdgeTime > rpmCh.timeout) {
-      rpm = 0.0f;
-    }
   }
   
   if (speedCh.newWidth) {
     float newSpeed = widthToSpeed(speedCh.lastWidth);
     speed = speed * 0.8f + newSpeed * 0.2f;
     speedCh.newWidth = false;
-  } else {
-    // If no new pulse for longer than timeout, set speed to 0
-    if (now - speedCh.lastEdgeTime > speedCh.timeout) {
-      speed = 0.0f;
-    }
   }
+  
 
   // --- Read clutch and brake states ---
-  bool clutch = digitalRead(CLUTCH_PIN);
+  bool clutch = !digitalRead(CLUTCH_PIN);
   bool brake  = digitalRead(BRAKE_PIN);
+  bool info_button = digitalRead(INFO_BUTTON_AIN);//analogRead(INFO_BUTTON_AIN) > 5 ? false : true;
 
   // --- Throttle print to 50 Hz (20 ms) ---
   static unsigned long nextPrint = 0;
@@ -157,7 +152,7 @@ void loop() {
     for (int i = 0; i < 5; i++) { if (speedStr[i] == ' ') speedStr[i] = '0'; else break; }
 
     char buffer[20];
-    snprintf(buffer, sizeof(buffer), "%s%04u%d%d", speedStr, rpm_u, clutch ? 1 : 0, brake ? 1 : 0);
+    snprintf(buffer, sizeof(buffer), "%s%04u%d%d%d", speedStr, rpm_u, clutch ? 1 : 0, brake ? 1 : 0, info_button ? 1 : 0);
     Serial.println(buffer);
   }
 }

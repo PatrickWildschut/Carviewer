@@ -43,8 +43,7 @@ def cruise_control_screen(carplay):
 
                 # Enable/Disable Cruise Control
                 if (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 180) <= y <= (HEIGHT - 130):
-                    enabled = not enabled
-                    currentVoltage = GetThrottle() * 2
+                    set_cruise_control_enabled(not enabled)
                 elif (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 120) <= y <= (HEIGHT - 70):
                     # Current speed button
                     setDesiredSpeed(currentSpeed)
@@ -129,6 +128,11 @@ def cruise_control_screen(carplay):
             text = font_small.render(label, True, BUTTON_TEXT_COLOR)
             screen.blit(text, text.get_rect(center=rect.center))
 
+
+        if GetInfoButtonOnPressed():
+            set_cruise_control_enabled(not enabled) # enable or disable
+            setDesiredSpeed(currentSpeed)
+
         if enabled:
             cruise_control()
         else:
@@ -162,7 +166,7 @@ def cruise_control_screen(carplay):
                     oldButtonState = currentButtonState
             else:
                 # Carplay terminated, exit Carplay-cruise control mode
-                carviewer.command("fullscreen enable")
+                #carviewer.command("fullscreen enable")
                 reset()
                 return
 
@@ -170,6 +174,19 @@ def cruise_control_screen(carplay):
         clock.tick(30)
 
     pygame.quit()
+
+def set_cruise_control_enabled(enable):
+    global enabled, currentVoltage
+    if enable:
+        if GetSpeed() < 30:
+            return
+
+        enabled = True
+        currentVoltage = GetThrottle()
+
+    else:
+        enabled = False
+        reset()
 
 def cruise_control():
     global enabled, ledInterval, buttonLed
@@ -222,7 +239,7 @@ def calculateNewVoltage():
         if deltaSpeed < -0.05 or deltaSpeed > 0.05:
             currentVoltage += desiredDifference * voltageIntervene
 
-    currentVoltage = max(min(currentVoltage, map_value(abs(desiredDifference), 2, 10, 2, 3.3)), minimalVoltage)
+    currentVoltage = max(min(3.29, currentVoltage), minimalVoltage)
 
 def setDesiredSpeed(value):
     global desiredSpeed

@@ -12,6 +12,7 @@ import threading
 import serial
 
 # Global variables
+serial_info_button = False
 serial_brake = False
 serial_clutch = False
 serial_speed = 0.0
@@ -19,7 +20,7 @@ serial_rpm = 0
 
 current_gear = -1
 def read_serial():
-    global serial_brake, serial_clutch, serial_speed, serial_rpm
+    global serial_info_button, serial_brake, serial_clutch, serial_speed, serial_rpm
 
     ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.01)  # Update port if needed
 
@@ -33,15 +34,17 @@ def read_serial():
                 if line:
                     try:
                         if len(line) >= 6:  # Minimum size check
-                            brake_str  = line[-1]     # last char
-                            clutch_str = line[-2]     # 2nd last char
-                            rpm_str    = line[-6:-2]  # 4 chars before clutch/brake
-                            speed_str  = line[:-6]    # everything else at the start
+                            info_str   = line[-1]
+                            brake_str  = line[-2]
+                            clutch_str = line[-3]
+                            rpm_str    = line[-7:-3]  # 4 chars before clutch/brake
+                            speed_str  = line[:-7]    # everything else at the start
 
                             serial_speed  = float(speed_str)
                             serial_rpm    = int(rpm_str)
                             serial_clutch = (clutch_str == '1')
                             serial_brake  = (brake_str == '1')
+                            serial_info_button = (info_str ==  '1')
                         else:
                             print(f"[Serial Parse Error] Incomplete line: {line}")
                     except Exception as e:
@@ -121,10 +124,11 @@ def GetThrottlePercentage() -> int:
     return int(last_throttle)
 
 def GetClutch() -> bool:
-    return not serial_clutch
+    return serial_clutch
 
 def GetBrake() -> bool:
     return serial_brake
+
 gears = [137,77,53,42,33,30]
 def GetSpeed():
     gear = CalculateGear()
@@ -169,6 +173,19 @@ def GetGear():
 def SetRelays(value):
     # needs to be inverted
     GPIO.output(relay_pin, not value)
+
+pressed = False
+def GetInfoButtonOnPressed():
+    global pressed
+    if pressed == serial_info_button:
+        return False
+
+    pressed = serial_info_button
+
+    if serial_info_button == True:
+        return True
+
+    return False
 
 def GetButtonPressed():
     return not GPIO.input(cruiseButtonPressed_pin)
