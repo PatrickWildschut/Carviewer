@@ -90,8 +90,18 @@ def SetRelays(value):
     # Dummy function: just print the relay state
     #print(f"SetRelays called with value: {value}")
 
+infowait = 0
+def GetInfoButtonOnPressed():
+    global infowait
+    infowait += 1
+
+    if infowait > 50:
+        infowait = 0
+        return True
+    
+    return False
+
 def GetButtonPressed():
-    # Randomly simulate button pressed
     return False
 
 def SetButtonLed(value):

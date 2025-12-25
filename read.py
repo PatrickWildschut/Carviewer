@@ -9,17 +9,17 @@ import layouts
 from Carviewer_ESP32 import *
 
 settings_json = None
+selected_layout = -1
 
 def read_menu():
-    global settings_json
+    global settings_json, selected_layout
 
     settings_json = load_json()
+    selected_layout = settings_json["Program"]["layout"]
     
     clock = pygame.time.Clock()
     running = True
-
-    layout_names = ["Original", "Fancy", "DiRT", "Modern"]
-    layout_current = -1
+    total_layouts = 4
 
     while running:
         for event in pygame.event.get():
@@ -36,19 +36,22 @@ def read_menu():
                 elif WIDTH - 150 <= event.pos[0] <= WIDTH - 50 and 50 <= event.pos[1] <= 50 + 30:
                     misc_pressed()
 
-        selected_layout = settings_json["Program"]["layout"]
-
-        if selected_layout == layout_names[0]:
-            layouts.original_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
+        if GetInfoButtonOnPressed():
+             selected_layout += 1
+             if selected_layout >= total_layouts:
+                selected_layout = 0
+        
+        if selected_layout == 0:
+                layouts.original_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
-        elif selected_layout == layout_names[1]:
-            layouts.fancy_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
+        elif selected_layout == 1:
+                layouts.fancy_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
-        elif selected_layout == layout_names[2]:
-            layouts.dirt_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
+        elif selected_layout == 2:
+                layouts.dirt_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
-        elif selected_layout == layout_names[3]:
-            layouts.modern_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
+        elif selected_layout == 3:
+                layouts.modern_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())   
 
         pygame.display.flip()
@@ -106,12 +109,13 @@ def apple_carplay():
 
 # Function for Settings action
 def settings_pressed():
-    global settings_json
+    global settings_json, selected_layout
 
     settings.settings_menu()
 
     # update json, settings may have changed
     settings_json = load_json()
+    selected_layout = settings_json["Program"]["layout"]
 
 # Function for Misc action
 def misc_pressed():

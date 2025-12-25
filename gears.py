@@ -37,11 +37,11 @@ def gears_screen():
         screen.fill(BACKGROUND_COLOR)
 
         # ----- Best Gear Calculation -----
-        best_gear = None
+        best_gear = 1
         best_rpm = None
 
         for i, rpm in enumerate(gear_rpm, start=1):
-            if rpm >= 1250:  # only consider gears above threshold
+            if rpm >= 1500:  # only consider gears above threshold
                 if best_rpm is None or rpm < best_rpm:
                     best_rpm = rpm
                     best_gear = i

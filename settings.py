@@ -3,6 +3,8 @@ import sys
 import json
 from Carviewer_ESP32 import *
 
+fps_options = [20, 30, 40, 50, 60]
+layout_options = ["Original", "Fancy", "DiRT", "Modern"]
 
 def get_json_settings():
     # read json
@@ -13,8 +15,6 @@ def get_json_settings():
 
 def settings_menu():
     running = True
-    fps_options = [20, 30, 40, 50, 60]
-    layout_options = ["Original", "Fancy", "DiRT", "Modern"]
     selected_layout, selected_fps = get_json_settings()
 
     clock = pygame.time.Clock()
@@ -30,7 +30,7 @@ def settings_menu():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Layout selection
                 if 100 <= event.pos[0] <= 100 + len(layout_options) * 206 and 180 <= event.pos[1] <= 280:
-                    selected_layout = layout_options[(event.pos[0] - 100) // 206]
+                    selected_layout = (event.pos[0] - 100) // 206 # index of layout :)
                     update_json(selected_layout, selected_fps)
                     
                 # FPS selection
@@ -55,7 +55,7 @@ def settings_menu():
             pygame.draw.rect(screen, BUTTON_COLOR, (rect_x, 180, 200, 100))
             layout_text = font_small.render(layout, True, BUTTON_TEXT_COLOR)
             screen.blit(layout_text, (rect_x + 100 - layout_text.get_width() // 2, 230 - layout_text.get_height() // 2))
-            if layout == selected_layout:
+            if layout_options.index(layout) == selected_layout:
                 pygame.draw.rect(screen, GREEN, (rect_x, 180, 200, 100), 3)
 
         # FPS section
@@ -82,6 +82,8 @@ def settings_menu():
 
 
 def update_json(layout, fps):
+    global layout_options
+
     with open("settings.json", "r") as file:
         settings_data = json.load(file)
 
