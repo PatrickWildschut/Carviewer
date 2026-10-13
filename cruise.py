@@ -214,7 +214,7 @@ def set_cruise_control_enabled(enable):
 
             enabled = True
             idle = False
-            currentVoltage = GetThrottle()
+            currentVoltage = GetThrottle() * 2  # DAC output needs twice the pedal ADC voltage
 
         else:
             reset()
