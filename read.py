@@ -48,8 +48,6 @@ def read_menu():
                 layouts.modern_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())   
 
-        layouts.draw_cruise_indicator()
-
         pygame.display.flip()
 
         if GetButtonPressed():

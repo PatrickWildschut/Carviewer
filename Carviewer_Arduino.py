@@ -194,6 +194,10 @@ def GetInfoButtonLongPressed():
     # number of long press ticks (one per second held, first at the long press threshold)
     return info_button.long_ticks(serial_info_button)
 
+def GetInfoButtonHeld():
+    # True while the info button is down
+    return info_button.held(serial_info_button)
+
 def GetButtonPressed():
     return not GPIO.input(cruiseButtonPressed_pin)
 

@@ -56,3 +56,9 @@ class InfoButton:
             self._update(pressed)
             result, self._long_pending = self._long_pending, 0
             return result
+
+    def held(self, pressed):
+        # True while the button is down
+        with self._lock:
+            self._update(pressed)
+            return self._down

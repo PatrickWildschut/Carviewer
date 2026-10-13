@@ -3,11 +3,12 @@ import math
 from Carviewer_Arduino import *
 import cruise
 
-def draw_cruise_indicator():
-    # Green C next to the Tools button (top right) while cruise control is enabled
-    if cruise.enabled:
-        c_text = font_large.render("C", True, GREEN)
-        screen.blit(c_text, c_text.get_rect(midright=(WIDTH - 165, 65)))
+def draw_cruise_set(center, font=None):
+    # Cruise control target speed in green, only while cruise control is enabled
+    if not cruise.enabled:
+        return
+    text = (font or font_small).render(str(int(cruise.desiredSpeed)), True, GREEN)
+    screen.blit(text, text.get_rect(center=center))
 
 # Function to draw dashboard
 def original_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
@@ -59,7 +60,7 @@ def original_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear
 
     speed_text = None
 
-    if speed > 105:
+    if speed > 120:
         speed_text = font_large.render(str(int(speed)), True, RED)
         pygame.draw.arc(screen, RED, (700, 100, 200, 200), 3 * math.pi / 2 - (speed / 200) * 2 * math.pi, 3 * math.pi / 2, 10)
     else:
@@ -100,6 +101,8 @@ def original_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear
     text_rect = settings_text.get_rect(center=(WIDTH - 50 - button_width // 2, 500 + button_height // 2))
     screen.blit(settings_text, text_rect)
 
+    draw_cruise_set((800, 150))
+
 def fancy_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     screen.fill(BACKGROUND_COLOR)
 
@@ -129,7 +132,7 @@ def fancy_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     pygame.draw.arc(screen, RED, (speed_pos[0] - 100, speed_pos[1] - 100, 200, 200),
                     3 * math.pi / 2 - (speed / 200) * 2 * math.pi, 3 * math.pi / 2, 10)
 
-    speed_color = RED if speed > 105 else TEXT_COLOR
+    speed_color = RED if speed > 120 else TEXT_COLOR
     speed_text = font_large.render(f"{int(speed)}", True, speed_color)
     screen.blit(speed_text, (speed_pos[0] - speed_text.get_width() // 2, speed_pos[1] - 20))
     kmh_text = font_small.render("km/h", True, TEXT_COLOR)
@@ -188,6 +191,8 @@ def fancy_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     tools_text = font_small.render("Tools", True, BUTTON_TEXT_COLOR)
     tools_rect = tools_text.get_rect(center=about_button_rect.center)
     screen.blit(tools_text, tools_rect)
+
+    draw_cruise_set((speed_pos[0], speed_pos[1] - 52))
 
     # --- Version ---
     version_text = font_small.render(f"Version: {settings_json['Program']['version']}", True, TEXT_COLOR)
@@ -261,6 +266,8 @@ def dirt_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     screen.blit(speed_text, (center_x - speed_text.get_width() // 2 + 3, center_y + main_bg_y_offset + 38))
     kmh_text = font_small.render("KMH", True, TEXT_COLOR)
     screen.blit(kmh_text, (center_x - kmh_text.get_width() // 2, center_y + main_bg_y_offset + 125))
+
+    draw_cruise_set((WIDTH // 2 + 190, HEIGHT // 2 + 82), font_large)
 
     # --- Clutch Indicator ---
     clutch_label = font_small.render("Clutch", True, TEXT_COLOR)
@@ -411,9 +418,9 @@ def modern_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     # ============================================================
     #                    SPEED + GEAR (CENTER)
     # ============================================================
-    speed_color = MODERN_RED if speed > 105 else TEXT_COLOR
+    speed_color = MODERN_RED if speed > 120 else TEXT_COLOR
     speed_text = font_speed.render(str(int(speed)), True, speed_color)
-    screen.blit(speed_text, speed_text.get_rect(center=(WIDTH // 2, 215)))
+    screen.blit(speed_text, speed_text.get_rect(center=(WIDTH // 2, 215)).topleft)
 
     kmh_text = font_small.render("km/h", True, MODERN_DIM_TEXT)
     screen.blit(kmh_text, kmh_text.get_rect(center=(WIDTH // 2, 300)))
@@ -425,6 +432,8 @@ def modern_dashboard(throttle, speed, rpm, clutch_pressed, brake_pressed, gear):
     gear_str = str(gear) if gear != -1 else "N"
     gear_text = font_super_large.render(gear_str, True, gear_color)
     screen.blit(gear_text, gear_text.get_rect(center=gear_center))
+
+    draw_cruise_set((WIDTH // 2, 118), font_large)
 
     # ============================================================
     #                    CLUTCH & BRAKE PILLS

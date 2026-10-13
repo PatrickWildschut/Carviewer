@@ -105,6 +105,10 @@ def GetInfoButtonCruiseShortPressed():
     # short press as seen by the cruise thread
     return info_button.cruise_short_pressed(_info_key_down())
 
+def GetInfoButtonHeld():
+    # True while the info button is down
+    return info_button.held(_info_key_down())
+
 def GetInfoButtonLongPressed():
     # number of long press ticks (one per second held, first at the long press threshold)
     return info_button.long_ticks(_info_key_down())

@@ -26,6 +26,9 @@ oldButtonState = False
 cruise_lock = threading.RLock()
 idle = False
 
+# throttle samples taken while the button is held, averaged when cruise control enables
+throttleSamples = []
+
 def cruise_control_screen(carplay):
     global enabled, oldSpeed, currentSpeed, desiredSpeed, currentVoltage, oldButtonState
 
@@ -169,7 +172,7 @@ def cruise_control_screen(carplay):
 
 def cruise_tick():
     # Runs on every frame in the background, whatever screen is shown
-    global currentSpeed
+    global currentSpeed, throttleSamples
 
     with cruise_lock:
         oldSpeed.append(currentSpeed)
@@ -179,6 +182,12 @@ def cruise_tick():
         shortPress = GetInfoButtonCruiseShortPressed()
         longTicks = GetInfoButtonLongPressed()
 
+        # while holding the button to enable, collect throttle samples to average
+        if not enabled and GetInfoButtonHeld():
+            throttleSamples.append(GetThrottle())
+        elif not longTicks:
+            throttleSamples = []
+
         # short press disables
         if shortPress and enabled:
             set_cruise_control_enabled(False)
@@ -186,7 +195,8 @@ def cruise_tick():
         # holding: first tick enables, every tick after that (or every tick while already enabled) adds 1 km/h
         for _ in range(longTicks):
             if not enabled:
-                set_cruise_control_enabled(True)
+                set_cruise_control_enabled(True, sum(throttleSamples) / len(throttleSamples) if throttleSamples else None)
+                throttleSamples = []
                 setDesiredSpeed(currentSpeed)
             else:
                 setDesiredSpeed(desiredSpeed + 1)
@@ -205,7 +215,7 @@ def cruise_loop():
 def start_cruise_thread():
     threading.Thread(target=cruise_loop, daemon=True).start()
 
-def set_cruise_control_enabled(enable):
+def set_cruise_control_enabled(enable, startVoltage=None):
     global enabled, currentVoltage, idle
     with cruise_lock:
         if enable:
@@ -214,7 +224,7 @@ def set_cruise_control_enabled(enable):
 
             enabled = True
             idle = False
-            currentVoltage = GetThrottle()
+            currentVoltage = startVoltage if startVoltage is not None else GetThrottle()
 
         else:
             reset()
