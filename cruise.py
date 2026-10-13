@@ -4,7 +4,6 @@ import time
 import math
 import subprocess
 import threading
-from collections import deque
 from Carviewer_Arduino import *
 
 # Variables
@@ -26,10 +25,6 @@ oldButtonState = False
 
 cruise_lock = threading.RLock()
 idle = False
-
-# most recent throttle samples taken while the button is held, averaged when cruise control enables
-# (only the last ~0.5s at 30 ticks/s, so easing off the pedal early in the hold doesn't drag the average to 0)
-throttleSamples = deque(maxlen=15)
 
 def cruise_control_screen(carplay):
     global enabled, oldSpeed, currentSpeed, desiredSpeed, currentVoltage, oldButtonState
@@ -174,7 +169,7 @@ def cruise_control_screen(carplay):
 
 def cruise_tick():
     # Runs on every frame in the background, whatever screen is shown
-    global currentSpeed, throttleSamples
+    global currentSpeed
 
     with cruise_lock:
         oldSpeed.append(currentSpeed)
@@ -184,12 +179,6 @@ def cruise_tick():
         shortPress = GetInfoButtonCruiseShortPressed()
         longTicks = GetInfoButtonLongPressed()
 
-        # while holding the button to enable, collect throttle samples to average
-        if not enabled and GetInfoButtonHeld():
-            throttleSamples.append(GetThrottle())
-        elif not longTicks:
-            throttleSamples.clear()
-
         # short press disables
         if shortPress and enabled:
             set_cruise_control_enabled(False)
@@ -197,8 +186,7 @@ def cruise_tick():
         # holding: first tick enables, every tick after that (or every tick while already enabled) adds 1 km/h
         for _ in range(longTicks):
             if not enabled:
-                set_cruise_control_enabled(True, sum(throttleSamples) / len(throttleSamples) if throttleSamples else None)
-                throttleSamples.clear()
+                set_cruise_control_enabled(True)
                 setDesiredSpeed(currentSpeed)
             else:
                 setDesiredSpeed(desiredSpeed + 1)
@@ -217,7 +205,7 @@ def cruise_loop():
 def start_cruise_thread():
     threading.Thread(target=cruise_loop, daemon=True).start()
 
-def set_cruise_control_enabled(enable, startVoltage=None):
+def set_cruise_control_enabled(enable):
     global enabled, currentVoltage, idle
     with cruise_lock:
         if enable:
@@ -226,7 +214,7 @@ def set_cruise_control_enabled(enable, startVoltage=None):
 
             enabled = True
             idle = False
-            currentVoltage = startVoltage if startVoltage is not None else GetThrottle()
+            currentVoltage = GetThrottle()
 
         else:
             reset()
