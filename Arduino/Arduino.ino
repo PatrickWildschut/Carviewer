@@ -7,9 +7,9 @@
 
 // --- Thresholds ---
 // Counts = 1023 * V / 5.0 (Uno @ 5V)
-// Wider hysteresis to mimic Schmitt behavior
+// Wide hysteresis to mimic Schmitt behavior: high above ~3.32 V, low below ~0.05 V
 const int RPM_HIGH_CNT     = 680;  // ~3.32 V
-const int RPM_LOW_CNT      = 10;  // ~2.54 V
+const int RPM_LOW_CNT      = 10;   // ~0.05 V
 const int SPEED_HIGH_CNT   = 680;
 const int SPEED_LOW_CNT    = 10;
 
@@ -17,7 +17,7 @@ const int SPEED_LOW_CNT    = 10;
 const unsigned long MIN_PULSE_US     = 50;        // Ignore very short pulses
 const unsigned long MAX_PULSE_US     = 1000000UL; // Ignore pulses > 1 sec
 const unsigned long MIN_GLITCH_US    = 100;       // Filter glitch edges < 100 µs
-const unsigned long RPM_TIMEOUT_US   = 125000;   // 1.25 s = RPM 0
+const unsigned long RPM_TIMEOUT_US   = 125000;    // 125 ms = RPM 0
 const unsigned long SPEED_TIMEOUT_US = 125000;    // 125 ms = Speed 0
 
 // --- Channel state ---
@@ -31,10 +31,11 @@ struct PulseChan {
   unsigned long lastEdgeTime;
   unsigned long timeout;
   bool newWidth;
+  bool stale;   // timed out while high, the next falling edge is not a real pulse
 };
 
-PulseChan rpmCh   = { RPM_AIN,   RPM_HIGH_CNT,   RPM_LOW_CNT,   false, 0, 0, 0, RPM_TIMEOUT_US,   false };
-PulseChan speedCh = { SPEED_AIN, SPEED_HIGH_CNT, SPEED_LOW_CNT, false, 0, 0, 0, SPEED_TIMEOUT_US, false };
+PulseChan rpmCh   = { RPM_AIN,   RPM_HIGH_CNT,   RPM_LOW_CNT,   false, 0, 0, 0, RPM_TIMEOUT_US,   false, false };
+PulseChan speedCh = { SPEED_AIN, SPEED_HIGH_CNT, SPEED_LOW_CNT, false, 0, 0, 0, SPEED_TIMEOUT_US, false, false };
 
 // --- Analog read with averaging ---
 int analogReadAvg(uint8_t pin, uint8_t samples = 1) {
@@ -72,15 +73,20 @@ inline void updateChannel(PulseChan &ch) {
       unsigned long delta = now - ch.lastEdgeTime;
       if (delta >= MIN_GLITCH_US) {
         unsigned long w = now - ch.tRise;
-        if (w >= MIN_PULSE_US && w <= MAX_PULSE_US) {
+        if (!ch.stale && w >= MIN_PULSE_US && w <= MAX_PULSE_US) {
           ch.lastWidth = w;
           ch.newWidth = true;
         }
+        ch.stale = false;
         ch.isHigh = false;
         ch.lastEdgeTime = now;
       }
-    } else {
-      ch.lastEdgeTime = now;
+    } else if (ch.timeout && (now - ch.tRise > ch.timeout)) {
+      // Signal stuck high: report zero and keep checking every timeout period
+      ch.lastWidth = 0;
+      ch.newWidth = true;
+      ch.stale = true;
+      ch.tRise = now;
     }
   }
 }
@@ -122,14 +128,22 @@ void loop() {
   static float rpm = 0.0f, speed = 0.0f;
 
   if (rpmCh.newWidth) {
-    float newRpm = widthToRPM(rpmCh.lastWidth);
-    rpm = rpm * 0.8f + newRpm * 0.2f;  // smooth with alpha = 0.2
+    if (rpmCh.lastWidth == 0) {
+      rpm = 0.0f;  // timeout: signal is gone, no smoothing
+    } else {
+      float newRpm = widthToRPM(rpmCh.lastWidth);
+      rpm = rpm * 0.8f + newRpm * 0.2f;  // smooth with alpha = 0.2
+    }
     rpmCh.newWidth = false;
   }
   
   if (speedCh.newWidth) {
-    float newSpeed = widthToSpeed(speedCh.lastWidth);
-    speed = speed * 0.8f + newSpeed * 0.2f;
+    if (speedCh.lastWidth == 0) {
+      speed = 0.0f;
+    } else {
+      float newSpeed = widthToSpeed(speedCh.lastWidth);
+      speed = speed * 0.8f + newSpeed * 0.2f;
+    }
     speedCh.newWidth = false;
   }
   

@@ -3,7 +3,8 @@ import sys
 import time
 import math
 import subprocess
-from Carviewer_ESP32 import *
+import threading
+from Carviewer_Arduino import *
 
 # Variables
 enabled = False
@@ -22,6 +23,9 @@ ledInterval = 0
 buttonLed = True
 oldButtonState = False
 
+cruise_lock = threading.RLock()
+idle = False
+
 def cruise_control_screen(carplay):
     global enabled, oldSpeed, currentSpeed, desiredSpeed, currentVoltage, oldButtonState
 
@@ -29,9 +33,6 @@ def cruise_control_screen(carplay):
     clock = pygame.time.Clock()
 
     while running:
-        oldSpeed.append(currentSpeed)
-        oldSpeed.pop(0)
-        currentSpeed = GetSpeed()
         throttle = int((currentVoltage - minimalVoltage) / 3.1 * 100)
         
         for event in pygame.event.get():
@@ -66,7 +67,7 @@ def cruise_control_screen(carplay):
         screen.fill(BACKGROUND_COLOR)
 
         # Title
-        title_text = font_large.render("Cruise Control", True, TEXT_COLOR)
+        title_text = font_large.render("Cruise Control" if carplay == None else "CarPlay Mode", True, TEXT_COLOR)
         screen.blit(title_text, (50, 50))
 
         # Throttle Circle
@@ -129,15 +130,6 @@ def cruise_control_screen(carplay):
             screen.blit(text, text.get_rect(center=rect.center))
 
 
-        if GetInfoButtonOnPressed():
-            set_cruise_control_enabled(not enabled) # enable or disable
-            setDesiredSpeed(currentSpeed)
-
-        if enabled:
-            cruise_control()
-        else:
-            reset()
-
         if carplay == None:
             if not GetButtonPressed():
                 reset()
@@ -175,18 +167,57 @@ def cruise_control_screen(carplay):
 
     pygame.quit()
 
+def cruise_tick():
+    # Runs on every frame in the background, whatever screen is shown
+    global currentSpeed
+
+    with cruise_lock:
+        oldSpeed.append(currentSpeed)
+        oldSpeed.pop(0)
+        currentSpeed = GetSpeed()
+
+        shortPress = GetInfoButtonCruiseShortPressed()
+        longTicks = GetInfoButtonLongPressed()
+
+        # short press disables
+        if shortPress and enabled:
+            set_cruise_control_enabled(False)
+
+        # holding: first tick enables, every tick after that (or every tick while already enabled) adds 1 km/h
+        for _ in range(longTicks):
+            if not enabled:
+                set_cruise_control_enabled(True)
+                setDesiredSpeed(currentSpeed)
+            else:
+                setDesiredSpeed(desiredSpeed + 1)
+
+        if enabled:
+            cruise_control()
+        elif not idle:
+            reset()
+
+def cruise_loop():
+    clock = pygame.time.Clock()
+    while True:
+        cruise_tick()
+        clock.tick(30)
+
+def start_cruise_thread():
+    threading.Thread(target=cruise_loop, daemon=True).start()
+
 def set_cruise_control_enabled(enable):
-    global enabled, currentVoltage
-    if enable:
-        if GetSpeed() < 30:
-            return
+    global enabled, currentVoltage, idle
+    with cruise_lock:
+        if enable:
+            if GetSpeed() < 30:
+                return
 
-        enabled = True
-        currentVoltage = GetThrottle()
+            enabled = True
+            idle = False
+            currentVoltage = GetThrottle()
 
-    else:
-        enabled = False
-        reset()
+        else:
+            reset()
 
 def cruise_control():
     global enabled, ledInterval, buttonLed
@@ -247,14 +278,16 @@ def setDesiredSpeed(value):
     desiredSpeed = int(desiredSpeed) + 0.5
 
 def reset():
-    global enabled, currentVoltage, ledInterval, buttonLed
-    SetRelays(False)
-    SetThrottle(minimalVoltage)
-    currentVoltage = minimalVoltage
-    enabled = False
-    ledInterval = 0
-    buttonLed = True
-    SetButtonLed(buttonLed)
+    global enabled, currentVoltage, ledInterval, buttonLed, idle
+    with cruise_lock:
+        SetRelays(False)
+        SetThrottle(minimalVoltage)
+        currentVoltage = minimalVoltage
+        enabled = False
+        idle = True
+        ledInterval = 0
+        buttonLed = True
+        SetButtonLed(buttonLed)
 
 if __name__ == "__main__":
     cruise_control_screen()

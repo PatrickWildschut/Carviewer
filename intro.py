@@ -1,6 +1,6 @@
 import pygame
 import sys
-from Carviewer_ESP32 import *
+from Carviewer_Arduino import *
 
 def fade_in_text(surface, text, font, color, center, alpha):
     text_surface = font.render(text, True, color)

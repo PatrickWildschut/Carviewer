@@ -1,7 +1,7 @@
 import pygame
 import sys
 import time
-from Carviewer_ESP32 import *
+from Carviewer_Arduino import *
 
 # Variables
 running_trip = False
@@ -47,8 +47,6 @@ def tripmaster_screen():
                 if 50 <= x <= 250 and 500 <= y <= 550:
                     return  # Exit function
 
-        if GetInfoButtonOnPressed():
-            running_trip = not running_trip
 
         # Draw background
         screen.fill(BACKGROUND_COLOR)

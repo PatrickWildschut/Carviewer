@@ -3,6 +3,7 @@ import json
 import math
 import time
 import random
+from infobutton import InfoButton
 
 def load_json():
     # read json
@@ -90,16 +91,23 @@ def SetRelays(value):
     # Dummy function: just print the relay state
     #print(f"SetRelays called with value: {value}")
 
-infowait = 0
-def GetInfoButtonOnPressed():
-    global infowait
-    infowait += 1
+info_button = InfoButton()
 
-    if infowait > 50:
-        infowait = 0
-        return True
-    
-    return False
+def _info_key_down():
+    # hold the I key to simulate the info button
+    return pygame.key.get_pressed()[pygame.K_i]
+
+def GetInfoButtonOnPressed():
+    # short press, fires on release
+    return info_button.short_pressed(_info_key_down())
+
+def GetInfoButtonCruiseShortPressed():
+    # short press as seen by the cruise thread
+    return info_button.cruise_short_pressed(_info_key_down())
+
+def GetInfoButtonLongPressed():
+    # number of long press ticks (one per second held, first at the long press threshold)
+    return info_button.long_ticks(_info_key_down())
 
 def GetButtonPressed():
     return False

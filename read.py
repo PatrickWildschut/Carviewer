@@ -6,7 +6,7 @@ import settings
 import subprocess
 import layouts
 
-from Carviewer_ESP32 import *
+from Carviewer_Arduino import *
 
 settings_json = None
 selected_layout = -1
@@ -19,7 +19,6 @@ def read_menu():
     
     clock = pygame.time.Clock()
     running = True
-    total_layouts = 4
 
     while running:
         for event in pygame.event.get():
@@ -36,11 +35,6 @@ def read_menu():
                 elif WIDTH - 150 <= event.pos[0] <= WIDTH - 50 and 50 <= event.pos[1] <= 50 + 30:
                     misc_pressed()
 
-        if GetInfoButtonOnPressed():
-             selected_layout += 1
-             if selected_layout >= total_layouts:
-                selected_layout = 0
-        
         if selected_layout == 0:
                 layouts.original_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())
@@ -53,6 +47,8 @@ def read_menu():
         elif selected_layout == 3:
                 layouts.modern_dashboard(GetThrottlePercentage(), GetSpeed(), GetRPM(), 
                        GetClutch(), GetBrake(), GetGear())   
+
+        layouts.draw_cruise_indicator()
 
         pygame.display.flip()
 
@@ -90,7 +86,7 @@ def fade_effect():
 
     time.sleep(1)
 
-    carplay_text = font_oac.render("Switching to Cruise Control", True, TEXT_COLOR)
+    carplay_text = font_oac.render("CarPlay mode active", True, TEXT_COLOR)
     text_rect = carplay_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
     screen.blit(carplay_text, text_rect)
     pygame.display.flip()

@@ -2,9 +2,10 @@
 
 import RPi.GPIO as GPIO
 import sys
-from Carviewer_ESP32 import *
+from Carviewer_Arduino import *
 import intro
 import read
+import cruise
 #import max7219
 import threading
 
@@ -31,6 +32,9 @@ def setup():
     # MAX7219 gear background update
     #thread = threading.Thread(target=SetMax7219Gear)
     #thread.start()
+
+    # Cruise control runs in the background on every screen
+    cruise.start_cruise_thread()
 
     # Start serial thread
     serial_thread = threading.Thread(target=read_serial, daemon=True)

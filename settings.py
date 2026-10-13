@@ -1,7 +1,7 @@
 import pygame
 import sys
 import json
-from Carviewer_ESP32 import *
+from Carviewer_Arduino import *
 
 fps_options = [20, 30, 40, 50, 60]
 layout_options = ["Original", "Fancy", "DiRT", "Modern"]

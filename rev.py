@@ -1,7 +1,7 @@
 import pygame
 import sys
 import time
-from Carviewer_ESP32 import *
+from Carviewer_Arduino import *
 
 revving_percent = 0
 

@@ -8,8 +8,10 @@ from gpiozero import Button
 import os
 import serial
 import threading
+from infobutton import InfoButton
 
-import serial
+# ADC/DAC share one SPI bus and are used from multiple threads
+adc_lock = threading.Lock()
 
 # Global variables
 serial_info_button = False
@@ -99,7 +101,8 @@ adc.set_adc_refvoltage(3.3)
 # GPIO
 
 def GetThrottle() -> float:
-    return adc.read_adc_voltage(1, 0)
+    with adc_lock:
+        return adc.read_adc_voltage(1, 0)
 
 def SetThrottle(value):
     if value < 0:
@@ -107,7 +110,8 @@ def SetThrottle(value):
     elif value > 3.29:
         value = 3.29
 
-    adc.set_dac_voltage(1, value)
+    with adc_lock:
+        adc.set_dac_voltage(1, value)
 
 last_throttle = 0
 
@@ -115,7 +119,9 @@ def GetThrottlePercentage() -> int:
     global last_throttle
 
     # Read raw throttle percentage from ADC
-    raw_value = math.floor((adc.read_adc_voltage(1, 0) / 1.2 - 0.1) * 100)
+    with adc_lock:
+        adc_voltage = adc.read_adc_voltage(1, 0)
+    raw_value = math.floor((adc_voltage / 1.2 - 0.1) * 100)
     raw_value = max(0, min(100, raw_value))  # Clamp to 0–100%
 
     # Apply exponential moving average
@@ -129,7 +135,7 @@ def GetClutch() -> bool:
 def GetBrake() -> bool:
     return serial_brake
 
-gears = [137,77,53,42,33,30]
+gears = [137,77,53,42,28,25]
 def GetSpeed():
     gear = CalculateGear()
     if serial_speed < 30 or gear == -1:
@@ -174,18 +180,19 @@ def SetRelays(value):
     # needs to be inverted
     GPIO.output(relay_pin, not value)
 
-pressed = False
+info_button = InfoButton()
+
 def GetInfoButtonOnPressed():
-    global pressed
-    if pressed == serial_info_button:
-        return False
+    # short press, fires on release
+    return info_button.short_pressed(serial_info_button)
 
-    pressed = serial_info_button
+def GetInfoButtonCruiseShortPressed():
+    # short press as seen by the cruise thread
+    return info_button.cruise_short_pressed(serial_info_button)
 
-    if serial_info_button == True:
-        return True
-
-    return False
+def GetInfoButtonLongPressed():
+    # number of long press ticks (one per second held, first at the long press threshold)
+    return info_button.long_ticks(serial_info_button)
 
 def GetButtonPressed():
     return not GPIO.input(cruiseButtonPressed_pin)

@@ -1,6 +1,6 @@
 import pygame
 import math
-from Carviewer_ESP32 import *
+from Carviewer_Arduino import *
 
 def UpdateGears():
     current_speed = GetSpeed()
