@@ -21,6 +21,7 @@ class InfoButton:
         self._long_pending = 0
 
     def _update(self, pressed):
+        pressed = not pressed  # raw reading is inverted: 0 means pressed
         now = time.monotonic()
         if pressed and not self._down:
             self._down = True
