@@ -114,6 +114,8 @@ def SetThrottle(value):
         adc.set_dac_voltage(1, value)
 
 last_throttle = 0
+THROTTLE_IDLE_PERCENT = 7  # percentage shown with the pedal released
+THROTTLE_SMOOTHING = 0.05  # EMA factor per call, lower = smoother
 
 def GetThrottlePercentage() -> int:
     global last_throttle
@@ -121,13 +123,16 @@ def GetThrottlePercentage() -> int:
     # Read raw throttle percentage from ADC
     with adc_lock:
         adc_voltage = adc.read_adc_voltage(1, 0)
-    raw_value = math.floor((adc_voltage / 1.2 - 0.1) * 100)
+    raw_value = (adc_voltage / 1.2 - 0.1) * 100
+
+    # Pedal at rest reads ~THROTTLE_IDLE_PERCENT, remap so rest is 0% and full is 100%
+    raw_value = (raw_value - THROTTLE_IDLE_PERCENT) / (100 - THROTTLE_IDLE_PERCENT) * 100
     raw_value = max(0, min(100, raw_value))  # Clamp to 0–100%
 
     # Apply exponential moving average
-    last_throttle = last_throttle + 0.2 * (raw_value - last_throttle)
+    last_throttle = last_throttle + THROTTLE_SMOOTHING * (raw_value - last_throttle)
 
-    return int(last_throttle)
+    return int(round(last_throttle))
 
 def GetClutch() -> bool:
     return serial_clutch

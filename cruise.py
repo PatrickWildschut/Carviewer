@@ -4,6 +4,7 @@ import time
 import math
 import subprocess
 import threading
+from collections import deque
 from Carviewer_Arduino import *
 
 # Variables
@@ -26,8 +27,9 @@ oldButtonState = False
 cruise_lock = threading.RLock()
 idle = False
 
-# throttle samples taken while the button is held, averaged when cruise control enables
-throttleSamples = []
+# most recent throttle samples taken while the button is held, averaged when cruise control enables
+# (only the last ~0.5s at 30 ticks/s, so easing off the pedal early in the hold doesn't drag the average to 0)
+throttleSamples = deque(maxlen=15)
 
 def cruise_control_screen(carplay):
     global enabled, oldSpeed, currentSpeed, desiredSpeed, currentVoltage, oldButtonState
@@ -186,7 +188,7 @@ def cruise_tick():
         if not enabled and GetInfoButtonHeld():
             throttleSamples.append(GetThrottle())
         elif not longTicks:
-            throttleSamples = []
+            throttleSamples.clear()
 
         # short press disables
         if shortPress and enabled:
@@ -196,7 +198,7 @@ def cruise_tick():
         for _ in range(longTicks):
             if not enabled:
                 set_cruise_control_enabled(True, sum(throttleSamples) / len(throttleSamples) if throttleSamples else None)
-                throttleSamples = []
+                throttleSamples.clear()
                 setDesiredSpeed(currentSpeed)
             else:
                 setDesiredSpeed(desiredSpeed + 1)
