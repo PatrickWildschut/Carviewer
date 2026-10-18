@@ -35,7 +35,7 @@ def stage_screen():
                 x, y = event.pos
 
                 # Check if Ready/Stop button is clicked
-                if (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 100) <= y <= (HEIGHT - 50):
+                if (WIDTH // 2 - S(100)) <= x <= (WIDTH // 2 + S(100)) and (HEIGHT - S(100)) <= y <= (HEIGHT - S(50)):
                     if not stage_running and waiting_for_start:
                         ready_button_label = "Ready..."
                     elif stage_running:
@@ -50,7 +50,7 @@ def stage_screen():
                         waiting_for_start = True  # Waiting for movement
                         
                 # Check if back button is clicked
-                if 50 <= x <= 250 and 500 <= y <= 550:
+                if S(50) <= x <= S(250) and S(500) <= y <= S(550):
                     return
 
         if waiting_for_start and current_speed > 0:
@@ -70,7 +70,7 @@ def stage_screen():
 
         # Title
         title_text = font_large.render("Stage", True, TEXT_COLOR)
-        screen.blit(title_text, (50, 50))
+        screen.blit(title_text, (S(50), S(50)))
 
         # Labels
         time_label = font_small.render("Elapsed Time", True, TEXT_COLOR)
@@ -92,27 +92,27 @@ def stage_screen():
 
         # Align everything nicely
         center_x = WIDTH // 2
-        base_y = 150
-        spacing = 80
+        base_y = S(150)
+        spacing = S(80)
 
         screen.blit(time_label, (center_x - time_label.get_width() // 2, base_y))
-        screen.blit(time_text, (center_x - time_text.get_width() // 2, base_y + 30))
+        screen.blit(time_text, (center_x - time_text.get_width() // 2, base_y + S(30)))
 
         screen.blit(distance_label, (center_x - distance_label.get_width() // 2, base_y + spacing))
-        screen.blit(total_distance_text, (center_x - total_distance_text.get_width() // 2, base_y + spacing + 30))
+        screen.blit(total_distance_text, (center_x - total_distance_text.get_width() // 2, base_y + spacing + S(30)))
 
         screen.blit(speed_label, (center_x - speed_label.get_width() // 2, base_y + 2 * spacing))
-        screen.blit(speed_text, (center_x - speed_text.get_width() // 2, base_y + 2 * spacing + 30))
+        screen.blit(speed_text, (center_x - speed_text.get_width() // 2, base_y + 2 * spacing + S(30)))
 
         # Ready/Stop Button (center bottom)
-        ready_button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT - 100, 200, 50)
+        ready_button_rect = pygame.Rect(WIDTH // 2 - S(100), HEIGHT - S(100), S(200), S(50))
         pygame.draw.rect(screen, BUTTON_COLOR, ready_button_rect)
         ready_text = font_small.render(ready_button_label, True, BUTTON_TEXT_COLOR)
         text_rect = ready_text.get_rect(center=ready_button_rect.center)
         screen.blit(ready_text, text_rect)
 
         # Back Button (Bottom Left, same size as in about)
-        back_rect = pygame.Rect(50, 500, 200, 50)
+        back_rect = pygame.Rect(S(50), S(500), S(200), S(50))
         pygame.draw.rect(screen, BUTTON_COLOR, back_rect)
         back_text = font_small.render("Back", True, BUTTON_TEXT_COLOR)
         text_rect = back_text.get_rect(center=back_rect.center)

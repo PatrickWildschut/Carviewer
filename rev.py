@@ -10,10 +10,10 @@ def revving_screen():
     running = True
     clock = pygame.time.Clock()
     
-    slider_x = 200
-    slider_y = 400
-    slider_width = 600
-    slider_height = 20
+    slider_x = S(200)
+    slider_y = S(400)
+    slider_width = S(600)
+    slider_height = S(20)
 
     SetThrottle(minimalVoltage)
 
@@ -29,10 +29,10 @@ def revving_screen():
                 running = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if 50 <= event.pos[0] <= 250 and 500 <= event.pos[1] <= 550:
+                if S(50) <= event.pos[0] <= S(250) and S(500) <= event.pos[1] <= S(550):
                     return
 
-                if WIDTH//2 - 150 <= event.pos[0] <= WIDTH//2 + 150 and 250 <= event.pos[1] <= 310:
+                if WIDTH//2 - S(150) <= event.pos[0] <= WIDTH//2 + S(150) and S(250) <= event.pos[1] <= S(310):
                     revving = not revving
                     if revving:
                         countdown_start_time = time.time()
@@ -57,7 +57,7 @@ def revving_screen():
 
         # Title
         title_text = font_large.render("Revving", True, TEXT_COLOR)
-        screen.blit(title_text, (50, 50))
+        screen.blit(title_text, (S(50), S(50)))
 
         # Handle countdown
         if revving:
@@ -65,7 +65,7 @@ def revving_screen():
                 time_passed = current_time - countdown_start_time
                 countdown = max(0, 5 - int(time_passed))
                 countdown_text = font_large.render(f"{countdown}", True, (255, 100, 100))
-                screen.blit(countdown_text, (WIDTH//2 - 15, 180))
+                screen.blit(countdown_text, (WIDTH//2 - S(15), S(180)))
 
                 if time_passed >= 5:
                     revving_action()
@@ -75,7 +75,7 @@ def revving_screen():
 
         # Start/Stop Revving Button
         button_label = "Stop Revving" if revving else "Start Revving"
-        rev_button_rect = pygame.Rect(WIDTH//2 - 150, 250, 300, 60)
+        rev_button_rect = pygame.Rect(WIDTH//2 - S(150), S(250), S(300), S(60))
         pygame.draw.rect(screen, BUTTON_COLOR, rev_button_rect)
         rev_text = font_small.render(button_label, True, BUTTON_TEXT_COLOR)
         rev_text_rect = rev_text.get_rect(center=rev_button_rect.center)
@@ -86,10 +86,10 @@ def revving_screen():
         fill_width = int((revving_percent / 100) * slider_width)
         pygame.draw.rect(screen, GREEN, (slider_x, slider_y, fill_width, slider_height))
         percent_text = font_small.render(f"{revving_percent}%", True, TEXT_COLOR)
-        screen.blit(percent_text, (slider_x + slider_width + 10, slider_y - 5))
+        screen.blit(percent_text, (slider_x + slider_width + S(10), slider_y - S(5)))
 
         # Back Button
-        back_button_rect = pygame.Rect(50, 500, 200, 50)
+        back_button_rect = pygame.Rect(S(50), S(500), S(200), S(50))
         pygame.draw.rect(screen, BUTTON_COLOR, back_button_rect)
         back_text = font_small.render("Back", True, BUTTON_TEXT_COLOR)
         back_text_rect = back_text.get_rect(center=back_button_rect.center)

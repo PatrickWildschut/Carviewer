@@ -12,14 +12,14 @@ def gears_screen():
     clock = pygame.time.Clock()
 
     circle_positions = {
-        1: (250, 200),
-        2: (500, 200),
-        3: (750, 200),
-        4: (350, 400),
-        5: (650, 400),
+        1: (S(250), S(200)),
+        2: (S(500), S(200)),
+        3: (S(750), S(200)),
+        4: (S(350), S(400)),
+        5: (S(650), S(400)),
     }
 
-    rpm_circle_radius = 100
+    rpm_circle_radius = S(100)
 
     while running:
         for event in pygame.event.get():
@@ -50,7 +50,7 @@ def gears_screen():
 
         # ----- Title -----
         title_text = font_large.render("Gears", True, TEXT_COLOR)
-        screen.blit(title_text, (50, 50))
+        screen.blit(title_text, (S(50), S(50)))
 
         # ----- Draw 5 Gear RPM Circles -----
         for gear in range(1, 6):
@@ -64,7 +64,7 @@ def gears_screen():
                 circle_color = TEXT_COLOR   # default
 
             # Draw outer circle
-            pygame.draw.circle(screen, circle_color, (cx, cy), rpm_circle_radius, 3)
+            pygame.draw.circle(screen, circle_color, (cx, cy), rpm_circle_radius, S(3))
 
             # Draw arc
             arc_rect = (
@@ -75,7 +75,7 @@ def gears_screen():
             start_angle = 3 * math.pi / 2
             end_angle = start_angle - (rpm / 6000) * (2 * math.pi)
 
-            pygame.draw.arc(screen, circle_color, arc_rect, end_angle, start_angle, 10)
+            pygame.draw.arc(screen, circle_color, arc_rect, end_angle, start_angle, S(10))
 
             # ----- Gear Number Color Logic -----
             current_gear = GetGear()
@@ -92,21 +92,21 @@ def gears_screen():
 
             # Draw gear number
             gear_text = font_large.render(str(gear), True, gear_number_color)
-            screen.blit(gear_text, gear_text.get_rect(center=(cx, cy - 20)))
+            screen.blit(gear_text, gear_text.get_rect(center=(cx, cy - S(20))))
 
             # RPM text under gear
             rpm_text = font_small.render(f"{int(rpm)} RPM", True, TEXT_COLOR)
-            screen.blit(rpm_text, rpm_text.get_rect(center=(cx, cy + 40)))
+            screen.blit(rpm_text, rpm_text.get_rect(center=(cx, cy + S(40))))
 
         # ----- Speed Display (bottom-right) -----
         speed_label = font_small.render("Speed:", True, TEXT_COLOR)
-        screen.blit(speed_label, (WIDTH - 200, HEIGHT - 120))
+        screen.blit(speed_label, (WIDTH - S(200), HEIGHT - S(120)))
 
         speed_value = font_large.render(f"{current_speed}", True, TEXT_COLOR)
-        screen.blit(speed_value, (WIDTH - 200, HEIGHT - 80))
+        screen.blit(speed_value, (WIDTH - S(200), HEIGHT - S(80)))
 
         # ----- Back Button -----
-        back_rect = pygame.Rect(50, 500, 200, 50)
+        back_rect = pygame.Rect(S(50), S(500), S(200), S(50))
         pygame.draw.rect(screen, BUTTON_COLOR, back_rect)
         back_text = font_small.render("Back", True, BUTTON_TEXT_COLOR)
         screen.blit(back_text, back_text.get_rect(center=back_rect.center))

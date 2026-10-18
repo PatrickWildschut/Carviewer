@@ -29,50 +29,50 @@ def settings_menu():
                     running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Layout selection
-                if 100 <= event.pos[0] <= 100 + len(layout_options) * 206 and 180 <= event.pos[1] <= 280:
-                    selected_layout = (event.pos[0] - 100) // 206 # index of layout :)
+                if S(100) <= event.pos[0] <= S(100) + len(layout_options) * S(206) and S(180) <= event.pos[1] <= S(280):
+                    selected_layout = (event.pos[0] - S(100)) // S(206) # index of layout :)
                     update_json(selected_layout, selected_fps)
                     
                 # FPS selection
-                elif 100 <= event.pos[0] <= 100 + len(fps_options) * 165 and 360 <= event.pos[1] <= 460:
-                    selected_fps = fps_options[(event.pos[0] - 100) // 165]
+                elif S(100) <= event.pos[0] <= S(100) + len(fps_options) * S(165) and S(360) <= event.pos[1] <= S(460):
+                    selected_fps = fps_options[(event.pos[0] - S(100)) // S(165)]
                     update_json(selected_layout, selected_fps)
                 # Back button
-                elif 50 <= event.pos[0] <= 250 and 500 <= event.pos[1] <= 550:
+                elif S(50) <= event.pos[0] <= S(250) and S(500) <= event.pos[1] <= S(550):
                     return
 
         screen.fill(BACKGROUND_COLOR)
         title_text = font_large.render("Settings", True, TEXT_COLOR)
-        screen.blit(title_text, (50, 50))
+        screen.blit(title_text, (S(50), S(50)))
 
          # Layout section
         layout_title = font_small.render("Layout:", True, TEXT_COLOR)
-        screen.blit(layout_title, (100, 130))
+        screen.blit(layout_title, (S(100), S(130)))
 
-        pygame.draw.rect(screen, BUTTON_COLOR, (100, 180, 824, 100))
+        pygame.draw.rect(screen, BUTTON_COLOR, (S(100), S(180), S(824), S(100)))
         for i, layout in enumerate(layout_options):
-            rect_x = 100 + i * 206
-            pygame.draw.rect(screen, BUTTON_COLOR, (rect_x, 180, 200, 100))
+            rect_x = S(100) + i * S(206)
+            pygame.draw.rect(screen, BUTTON_COLOR, (rect_x, S(180), S(200), S(100)))
             layout_text = font_small.render(layout, True, BUTTON_TEXT_COLOR)
-            screen.blit(layout_text, (rect_x + 100 - layout_text.get_width() // 2, 230 - layout_text.get_height() // 2))
+            screen.blit(layout_text, (rect_x + S(100) - layout_text.get_width() // 2, S(230) - layout_text.get_height() // 2))
             if layout_options.index(layout) == selected_layout:
-                pygame.draw.rect(screen, GREEN, (rect_x, 180, 200, 100), 3)
+                pygame.draw.rect(screen, GREEN, (rect_x, S(180), S(200), S(100)), S(3))
 
         # FPS section
         fps_title = font_small.render("FPS:", True, TEXT_COLOR)
-        screen.blit(fps_title, (100, 330))
+        screen.blit(fps_title, (S(100), S(330)))
 
-        pygame.draw.rect(screen, BUTTON_COLOR, (100, 360, 824, 100))
+        pygame.draw.rect(screen, BUTTON_COLOR, (S(100), S(360), S(824), S(100)))
         for i, fps in enumerate(fps_options):
-            rect_x = 100 + i * 165
-            pygame.draw.rect(screen, BUTTON_COLOR, (rect_x, 360, 150, 100))
+            rect_x = S(100) + i * S(165)
+            pygame.draw.rect(screen, BUTTON_COLOR, (rect_x, S(360), S(150), S(100)))
             fps_text = font_small.render(f"{fps} FPS", True, BUTTON_TEXT_COLOR)
-            screen.blit(fps_text, (rect_x + 75 - fps_text.get_width() // 2, 410 - fps_text.get_height() // 2))
+            screen.blit(fps_text, (rect_x + S(75) - fps_text.get_width() // 2, S(410) - fps_text.get_height() // 2))
             if fps == selected_fps:
-                pygame.draw.rect(screen, GREEN, (rect_x, 360, 150, 100), 3)
+                pygame.draw.rect(screen, GREEN, (rect_x, S(360), S(150), S(100)), S(3))
 
         # Back button
-        back_button_rect = pygame.Rect(50, 500, 200, 50)
+        back_button_rect = pygame.Rect(S(50), S(500), S(200), S(50))
         pygame.draw.rect(screen, BUTTON_COLOR, back_button_rect)
         back_text = font_small.render("Back", True, BUTTON_TEXT_COLOR)
         screen.blit(back_text, back_text.get_rect(center=back_button_rect.center))

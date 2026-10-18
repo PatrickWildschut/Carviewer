@@ -26,13 +26,13 @@ def read_menu():
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Check if the mouse click is within the Apple Carplay button area
-                if 50 <= event.pos[0] <= 50 + 200 and 500 <= event.pos[1] <= 500 + 50:
+                if S(50) <= event.pos[0] <= S(50) + S(200) and S(500) <= event.pos[1] <= S(500) + S(50):
                     apple_carplay()
                 # Check if the mouse click is within the Settings button area
-                elif WIDTH - 50 - 200 <= event.pos[0] <= WIDTH - 50 and 500 <= event.pos[1] <= 500 + 50:
+                elif WIDTH - S(50) - S(200) <= event.pos[0] <= WIDTH - S(50) and S(500) <= event.pos[1] <= S(500) + S(50):
                     settings_pressed()
                 # Check if the mouse click is within the Misc button area
-                elif WIDTH - 150 <= event.pos[0] <= WIDTH - 50 and 50 <= event.pos[1] <= 50 + 30:
+                elif WIDTH - S(150) <= event.pos[0] <= WIDTH - S(50) and S(50) <= event.pos[1] <= S(50) + S(30):
                     misc_pressed()
 
         if selected_layout == 0:
@@ -60,7 +60,7 @@ def read_menu():
     
 
 def fade_effect():
-    font_oac = pygame.font.Font(None, 64)
+    font_oac = pygame.font.Font(None, S(64))
     OVERLAY_COLOR = (30, 30, 30, 180)
     fade_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
     alpha = 0
@@ -85,7 +85,7 @@ def fade_effect():
     time.sleep(1)
 
     carplay_text = font_oac.render("CarPlay mode active", True, TEXT_COLOR)
-    text_rect = carplay_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
+    text_rect = carplay_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + S(100)))
     screen.blit(carplay_text, text_rect)
     pygame.display.flip()
 

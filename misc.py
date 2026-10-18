@@ -13,8 +13,8 @@ def misc_screen():
     running = True
     clock = pygame.time.Clock()
 
-    button_width, button_height = 250, 60
-    button_spacing = 20
+    button_width, button_height = S(250), S(60)
+    button_spacing = S(20)
 
     total_buttons = 4
     start_y = HEIGHT // 2 - (total_buttons * button_height + (total_buttons - 1) * button_spacing) // 2
@@ -24,8 +24,8 @@ def misc_screen():
         "Trip Master": pygame.Rect(WIDTH // 2 - button_width // 2, start_y + (button_height + button_spacing), button_width, button_height),
         "Stage": pygame.Rect(WIDTH // 2 - button_width // 2, start_y + 2 * (button_height + button_spacing), button_width, button_height),
         "Revving": pygame.Rect(WIDTH // 2 - button_width // 2, start_y + 3 * (button_height + button_spacing), button_width, button_height),
-        "About": pygame.Rect(WIDTH - 150, 50, 100, 30),
-        "Back": pygame.Rect(50, 500, 200, 50)
+        "About": pygame.Rect(WIDTH - S(150), S(50), S(100), S(30)),
+        "Back": pygame.Rect(S(50), S(500), S(200), S(50))
     }
 
     while running:

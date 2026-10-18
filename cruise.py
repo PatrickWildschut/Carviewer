@@ -43,24 +43,24 @@ def cruise_control_screen(carplay):
                 x, y = event.pos
 
                 # Enable/Disable Cruise Control
-                if (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 180) <= y <= (HEIGHT - 130):
+                if (WIDTH // 2 - S(100)) <= x <= (WIDTH // 2 + S(100)) and (HEIGHT - S(180)) <= y <= (HEIGHT - S(130)):
                     set_cruise_control_enabled(not enabled)
-                elif (WIDTH // 2 - 100) <= x <= (WIDTH // 2 + 100) and (HEIGHT - 120) <= y <= (HEIGHT - 70):
+                elif (WIDTH // 2 - S(100)) <= x <= (WIDTH // 2 + S(100)) and (HEIGHT - S(120)) <= y <= (HEIGHT - S(70)):
                     # Current speed button
                     setDesiredSpeed(currentSpeed)
 
                 # Speed control buttons
-                if 50 <= x <= 140:
-                    if 400 <= y <= 450:
+                if S(50) <= x <= S(140):
+                    if S(400) <= y <= S(450):
                         setDesiredSpeed(desiredSpeed - 1)
-                    elif 460 <= y <= 510:
+                    elif S(460) <= y <= S(510):
                         delta_5 = desiredSpeed % 5
                         setDesiredSpeed(desiredSpeed - 5 + (5-delta_5 if delta_5 > 2 else -delta_5))
 
-                if WIDTH - 140 <= x <= WIDTH - 50:
-                    if 400 <= y <= 450:
+                if WIDTH - S(140) <= x <= WIDTH - S(50):
+                    if S(400) <= y <= S(450):
                         setDesiredSpeed(desiredSpeed + 1)
-                    elif 460 <= y <= 510:
+                    elif S(460) <= y <= S(510):
                         delta_5 = desiredSpeed % 5
                         setDesiredSpeed(desiredSpeed + 5 + (5-delta_5 if delta_5 > 2 else -delta_5))
 
@@ -68,63 +68,63 @@ def cruise_control_screen(carplay):
 
         # Title
         title_text = font_large.render("Cruise Control" if carplay == None else "CarPlay Mode", True, TEXT_COLOR)
-        screen.blit(title_text, (50, 50))
+        screen.blit(title_text, (S(50), S(50)))
 
         # Throttle Circle
         throttle_label = font_small.render("Throttle", True, TEXT_COLOR)
-        screen.blit(throttle_label, (50, 150))
-        pygame.draw.circle(screen, TEXT_COLOR, (300, 200), 100, 3)
-        pygame.draw.arc(screen, TEXT_COLOR, (200, 100, 200, 200),
-                        3 * math.pi / 2 - (throttle / 100) * 2 * math.pi, 3 * math.pi / 2, 10)
+        screen.blit(throttle_label, (S(50), S(150)))
+        pygame.draw.circle(screen, TEXT_COLOR, (S(300), S(200)), S(100), S(3))
+        pygame.draw.arc(screen, TEXT_COLOR, (S(200), S(100), S(200), S(200)),
+                        3 * math.pi / 2 - (throttle / 100) * 2 * math.pi, 3 * math.pi / 2, S(10))
         throttle_text = font_large.render(str(throttle), True, TEXT_COLOR)
-        screen.blit(throttle_text, (300 - throttle_text.get_width() / 2, 200 - throttle_text.get_height() / 2))
-        screen.blit(font_small.render("%", True, TEXT_COLOR), (325, 190))
+        screen.blit(throttle_text, (S(300) - throttle_text.get_width() / 2, S(200) - throttle_text.get_height() / 2))
+        screen.blit(font_small.render("%", True, TEXT_COLOR), (S(325), S(190)))
 
         # Speed Circle
         speed_label = font_small.render("Speed", True, TEXT_COLOR)
-        screen.blit(speed_label, (550, 150))
-        pygame.draw.circle(screen, TEXT_COLOR, (800, 200), 100, 3)
+        screen.blit(speed_label, (S(550), S(150)))
+        pygame.draw.circle(screen, TEXT_COLOR, (S(800), S(200)), S(100), S(3))
         if currentSpeed > 105:
             speed_color = RED
         else:
             speed_color = TEXT_COLOR
-        pygame.draw.arc(screen, speed_color, (700, 100, 200, 200),
-                        3 * math.pi / 2 - (currentSpeed / 200) * 2 * math.pi, 3 * math.pi / 2, 10)
+        pygame.draw.arc(screen, speed_color, (S(700), S(100), S(200), S(200)),
+                        3 * math.pi / 2 - (currentSpeed / 200) * 2 * math.pi, 3 * math.pi / 2, S(10))
         speed_text = font_large.render(str(int(currentSpeed)), True, speed_color)
-        screen.blit(speed_text, (800 - speed_text.get_width() / 2, 200 - speed_text.get_height() / 2))
-        screen.blit(font_small.render("km/h", True, TEXT_COLOR), (775, 225))
+        screen.blit(speed_text, (S(800) - speed_text.get_width() / 2, S(200) - speed_text.get_height() / 2))
+        screen.blit(font_small.render("km/h", True, TEXT_COLOR), (S(775), S(225)))
 
         # Desired Speed Text below throttle and speed
         desired_speed_text = font_large.render(f"Desired: {int(desiredSpeed)} km/h", True, TEXT_COLOR)
-        screen.blit(desired_speed_text, (WIDTH // 2 - desired_speed_text.get_width() // 2, 330))
+        screen.blit(desired_speed_text, (WIDTH // 2 - desired_speed_text.get_width() // 2, S(330)))
 
         # Cruise Control toggle button
-        cruise_control_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT - 180, 200, 50)
+        cruise_control_rect = pygame.Rect(WIDTH // 2 - S(100), HEIGHT - S(180), S(200), S(50))
         pygame.draw.rect(screen, BUTTON_COLOR, cruise_control_rect)
         cruise_control_text = font_small.render("Disable Cruise" if enabled else "Enable Cruise", True, BUTTON_TEXT_COLOR)
         screen.blit(cruise_control_text, cruise_control_text.get_rect(center=cruise_control_rect.center))
 
         # Current speed button
-        current_speed_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT - 120, 200, 50)
+        current_speed_rect = pygame.Rect(WIDTH // 2 - S(100), HEIGHT - S(120), S(200), S(50))
         pygame.draw.rect(screen, BUTTON_COLOR, current_speed_rect)
         current_speed_text = font_small.render("Current Speed", True, BUTTON_TEXT_COLOR)
         screen.blit(current_speed_text, current_speed_text.get_rect(center=current_speed_rect.center))
 
         # Vertical Speed Adjustment Buttons
-        button_size = (90, 50)
+        button_size = (S(90), S(50))
 
         # Left side (-5 and -1)
-        left_buttons = [("-1", 400), ("-5", 460)]
+        left_buttons = [("-1", S(400)), ("-5", S(460))]
         for label, y in left_buttons:
-            rect = pygame.Rect(50, y, *button_size)
+            rect = pygame.Rect(S(50), y, *button_size)
             pygame.draw.rect(screen, BUTTON_COLOR, rect)
             text = font_small.render(label, True, BUTTON_TEXT_COLOR)
             screen.blit(text, text.get_rect(center=rect.center))
 
         # Right side (+1 and +5)
-        right_buttons = [("+1", 400), ("+5", 460)]
+        right_buttons = [("+1", S(400)), ("+5", S(460))]
         for label, y in right_buttons:
-            rect = pygame.Rect(WIDTH - 140, y, *button_size)
+            rect = pygame.Rect(WIDTH - S(140), y, *button_size)
             pygame.draw.rect(screen, BUTTON_COLOR, rect)
             text = font_small.render(label, True, BUTTON_TEXT_COLOR)
             screen.blit(text, text.get_rect(center=rect.center))

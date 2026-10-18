@@ -19,11 +19,9 @@ def setup():
 
     cruise.start_cruise_thread()
 
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "fullscreen":
-            screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    # NOTE: fullscreen is set up at startup by Carviewer_dummy (based on the
+    # "fullscreen" command line argument), so the screen surface stays valid.
 
-    
     intro.show_intro()
 
 # Main loop

@@ -3,6 +3,7 @@ import json
 import math
 from ADCDACPi import ADCDACPi
 import time
+import sys
 import RPi.GPIO as GPIO
 from gpiozero import Button
 import os
@@ -75,10 +76,6 @@ minimalVoltage = 0.2
 # Initialize Pygame
 pygame.display.init()
 pygame.font.init()
-# Fonts
-font_super_large = pygame.font.Font(None, 64)
-font_large = pygame.font.Font(None, 48)
-font_small = pygame.font.Font(None, 36)
 
 # Colors
 BACKGROUND_COLOR = (20, 20, 25)
@@ -90,9 +87,29 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 # Screen dimensions
-WIDTH, HEIGHT = 1024, 576
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+# The whole UI is authored in a DESIGN_WIDTH x DESIGN_HEIGHT design space and
+# scaled to the real screen with S(), so it looks identical at any resolution.
+DESIGN_WIDTH, DESIGN_HEIGHT = 1024, 576
+
+# Fullscreen on the native resolution when started with the "fullscreen"
+# argument (see start.sh), otherwise a design-sized window for desktop testing.
+if "fullscreen" in sys.argv:
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+else:
+    screen = pygame.display.set_mode((DESIGN_WIDTH, DESIGN_HEIGHT))
 pygame.display.set_caption("Carviewer 98-RS-RV")
+
+WIDTH, HEIGHT = screen.get_size()
+SCALE = min(WIDTH / DESIGN_WIDTH, HEIGHT / DESIGN_HEIGHT)
+
+def S(value):
+    # design-space pixels -> real screen pixels
+    return round(value * SCALE)
+
+# Fonts (sizes in design-space pixels)
+font_super_large = pygame.font.Font(None, S(64))
+font_large = pygame.font.Font(None, S(48))
+font_small = pygame.font.Font(None, S(36))
 
 # ADC DAC
 adc = ADCDACPi(2)

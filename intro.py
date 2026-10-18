@@ -8,15 +8,15 @@ def fade_in_text(surface, text, font, color, center, alpha):
     text_rect = text_surface.get_rect(center=center)
     surface.blit(text_surface, text_rect)
 
-font_extra_large = pygame.font.Font(None, 64)
-font_medium = pygame.font.Font(None, 48)
+font_extra_large = pygame.font.Font(None, S(64))
+font_medium = pygame.font.Font(None, S(48))
 
 # Clock
 clock = pygame.time.Clock()
 FPS = 60
 
 # Animation settings
-car_speed = 6
+car_speed = S(6)
 pause_frames = 60
 fade_frames = 60
 
@@ -29,7 +29,7 @@ def show_intro():
 
     # Load and scale car image (original is 570x403)
     original_car = pygame.image.load("fiesta_mk6.png").convert_alpha()
-    car_width = 400
+    car_width = S(400)
     car_height = int(403 * (car_width / 570))  # maintain aspect ratio
     car_image = pygame.transform.smoothscale(original_car, (car_width, car_height))
     car_x = -car_image.get_width()
@@ -60,10 +60,10 @@ def show_intro():
         elif phase == "fade_text":
             alpha = min(255, int((frame / fade_frames) * 255))
             # Top title
-            fade_in_text(screen, "Car Viewer", font_extra_large, TEXT_COLOR, (WIDTH // 2, car_y - 60), alpha)
+            fade_in_text(screen, "Car Viewer", font_extra_large, TEXT_COLOR, (WIDTH // 2, car_y - S(60)), alpha)
             # Under car
-            fade_in_text(screen, "Ford Fiesta MK6 Sport", font_medium, TEXT_COLOR, (WIDTH // 2, car_y + car_height + 30), alpha)
-            fade_in_text(screen, "Made by Patrick Wildschut", font_small, TEXT_COLOR, (WIDTH // 2, car_y + car_height + 70), alpha)
+            fade_in_text(screen, "Ford Fiesta MK6 Sport", font_medium, TEXT_COLOR, (WIDTH // 2, car_y + car_height + S(30)), alpha)
+            fade_in_text(screen, "Made by Patrick Wildschut", font_small, TEXT_COLOR, (WIDTH // 2, car_y + car_height + S(70)), alpha)
             frame += 1
             if frame >= fade_frames + 60:
                 phase = "done"

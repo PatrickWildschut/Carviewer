@@ -40,11 +40,9 @@ def setup():
     serial_thread = threading.Thread(target=read_serial, daemon=True)
     serial_thread.start()
 
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "fullscreen":
-            screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    # NOTE: fullscreen is set up at startup by Carviewer_Arduino (based on the
+    # "fullscreen" command line argument), so the screen surface stays valid.
 
-    
     intro.show_intro()
 
 # Main loop
