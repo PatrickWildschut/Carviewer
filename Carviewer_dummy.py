@@ -96,6 +96,9 @@ def GetSpeed():
 
 def GetRPM():
     global old_rpm
+    # hold the R key to simulate the engine being switched off
+    if pygame.key.get_pressed()[pygame.K_r]:
+        return 0
     old_rpm += 1
     return old_rpm
 

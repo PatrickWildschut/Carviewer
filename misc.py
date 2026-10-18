@@ -8,6 +8,7 @@ import stage
 import tripmaster
 import rev
 import gears
+import chess_play
 
 def misc_screen():
     running = True
@@ -16,7 +17,7 @@ def misc_screen():
     button_width, button_height = S(250), S(60)
     button_spacing = S(20)
 
-    total_buttons = 4
+    total_buttons = 5
     start_y = HEIGHT // 2 - (total_buttons * button_height + (total_buttons - 1) * button_spacing) // 2
 
     buttons = {
@@ -24,6 +25,7 @@ def misc_screen():
         "Trip Master": pygame.Rect(WIDTH // 2 - button_width // 2, start_y + (button_height + button_spacing), button_width, button_height),
         "Stage": pygame.Rect(WIDTH // 2 - button_width // 2, start_y + 2 * (button_height + button_spacing), button_width, button_height),
         "Revving": pygame.Rect(WIDTH // 2 - button_width // 2, start_y + 3 * (button_height + button_spacing), button_width, button_height),
+        "Chess": pygame.Rect(WIDTH // 2 - button_width // 2, start_y + 4 * (button_height + button_spacing), button_width, button_height),
         "About": pygame.Rect(WIDTH - S(150), S(50), S(100), S(30)),
         "Back": pygame.Rect(S(50), S(500), S(200), S(50))
     }
@@ -47,6 +49,8 @@ def misc_screen():
                     stage.stage_screen()
                 elif buttons["Revving"].collidepoint(x, y):
                     rev.revving_screen()
+                elif buttons["Chess"].collidepoint(x, y):
+                    chess_play.chess_screen()
 
         screen.fill(BACKGROUND_COLOR)
 

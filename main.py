@@ -8,8 +8,8 @@ import read
 import cruise
 #import max7219
 import threading
-import os
-import time
+import engine_off
+import screensaver
 
 # Gets called once
 def setup():
@@ -42,31 +42,13 @@ def setup():
     serial_thread = threading.Thread(target=read_serial, daemon=True)
     serial_thread.start()
 
-    threading.Thread(target=shutdown_on_engine_off, daemon=True).start()
+    engine_off.start(GetRPM)
+    screensaver.start(GetSpeed)
 
     # NOTE: fullscreen is set up at startup by Carviewer_Arduino (based on the
     # "fullscreen" command line argument), so the screen surface stays valid.
 
     intro.show_intro()
-
-# Shuts the Pi down once the engine has been switched off.
-# Only arms after the engine has actually run, and RPM must stay at 0 for
-# SHUTDOWN_DELAY seconds so a short stall or serial hiccup doesn't kill the Pi.
-SHUTDOWN_DELAY = 1
-def shutdown_on_engine_off():
-    armed = False
-    zero_since = None
-    while True:
-        if GetRPM() > 0:
-            armed = True
-            zero_since = None
-        elif armed:
-            if zero_since is None:
-                zero_since = time.time()
-            elif time.time() - zero_since >= SHUTDOWN_DELAY:
-                os.system("shutdown now")
-                return
-        time.sleep(0.1)
 
 # Main loop
 def main():
