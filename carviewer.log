@@ -1,0 +1,299 @@
+=== 2026-10-18 15:18:12 starting: ./main.py fullscreen ===
+Exception in thread Thread-3 (read_serial):
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+              ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/ttyUSB0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/usr/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/Carviewer/Carviewer_Arduino.py", line 28, in read_serial
+    ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.01)  # Update port if needed
+  File "/usr/lib/python3/dist-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+    ~~~~~~~~~^^
+  File "/usr/lib/python3/dist-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 2] could not open port /dev/ttyUSB0: [Errno 2] No such file or directory: '/dev/ttyUSB0'
+pygame 2.6.1 (SDL 2.32.4, Python 3.13.5)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Traceback (most recent call last):
+  File "/home/patrick/Carviewer/main.py", line 67, in <module>
+    main()
+    ~~~~^^
+  File "/home/patrick/Carviewer/main.py", line 52, in main
+    read.read_menu()
+    ~~~~~~~~~~~~~~^^
+  File "/home/patrick/Carviewer/read.py", line 36, in read_menu
+    misc_pressed()
+    ~~~~~~~~~~~~^^
+  File "/home/patrick/Carviewer/read.py", line 116, in misc_pressed
+    misc.misc_screen()
+    ~~~~~~~~~~~~~~~~^^
+  File "/home/patrick/Carviewer/misc.py", line 51, in misc_screen
+    screen.fill(BACKGROUND_COLOR)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+pygame.error: display Surface quit
+=== 2026-10-18 15:36:01 starting: ./main.py fullscreen ===
+Exception in thread Thread-3 (read_serial):
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/serial/serialposix.py", line 322, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+              ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/ttyUSB0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/usr/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/Carviewer/Carviewer_Arduino.py", line 28, in read_serial
+    ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.01)  # Update port if needed
+  File "/usr/lib/python3/dist-packages/serial/serialutil.py", line 244, in __init__
+    self.open()
+    ~~~~~~~~~^^
+  File "/usr/lib/python3/dist-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 2] could not open port /dev/ttyUSB0: [Errno 2] No such file or directory: '/dev/ttyUSB0'
+=== 2026-10-18 15:38:00 starting: ./main.py fullscreen ===
+=== 2026-10-18 15:46:14 starting: ./main.py fullscreen ===
+/home/patrick/.config/react-carplay/config.json
+true
+config read
+(node:2379) UnhandledPromiseRejectionWarning: TypeError: electron.systemPreferences.askForMediaAccess is not a function
+    at createWindow (/tmp/.mount_CarplakcW4Pz/resources/app.asar/out/main/index.js:382:30)
+    at /tmp/.mount_CarplakcW4Pz/resources/app.asar/out/main/index.js:408:3
+(Use `react-carplay --trace-warnings ...` to show where the warning was created)
+(node:2379) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)
+[2485:1018/154724.707517:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.707995:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.708309:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.708529:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.708711:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.708883:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.709063:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.709228:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.710660:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.710982:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.711250:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.711460:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.711627:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.711808:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.711971:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154724.712134:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[2485:1018/154726.325059:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 1 times!
+[2485:1018/154727.634711:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 2 times!
+/home/patrick/.config/react-carplay/config.json
+true
+config created and read
+(node:3595) UnhandledPromiseRejectionWarning: TypeError: electron.systemPreferences.askForMediaAccess is not a function
+    at createWindow (/tmp/.mount_CarplaMTwop7/resources/app.asar/out/main/index.js:382:30)
+    at /tmp/.mount_CarplaMTwop7/resources/app.asar/out/main/index.js:408:3
+(Use `react-carplay --trace-warnings ...` to show where the warning was created)
+(node:3595) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)
+[3658:1018/154907.816112:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.816648:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.817023:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.817314:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.817560:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.817790:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.818207:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.818590:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.820111:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.820436:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.820674:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.820891:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.821112:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.821471:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.821753:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154907.822024:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[3658:1018/154910.402238:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 1 times!
+/home/patrick/.config/react-carplay/config.json
+true
+config read
+(node:4907) UnhandledPromiseRejectionWarning: TypeError: electron.systemPreferences.askForMediaAccess is not a function
+    at createWindow (/tmp/.mount_CarplatR9dHx/resources/app.asar/out/main/index.js:382:30)
+    at /tmp/.mount_CarplatR9dHx/resources/app.asar/out/main/index.js:408:3
+(Use `react-carplay --trace-warnings ...` to show where the warning was created)
+(node:4907) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)
+[4969:1018/155258.451719:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.452286:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.452861:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.453131:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.453321:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.453508:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.453682:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.453846:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.457132:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.457713:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.461819:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.462297:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.462549:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.464313:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.464742:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155258.464991:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[4969:1018/155326.802465:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 1 times!
+saving settings {
+  width: 800,
+  height: 640,
+  fps: 20,
+  dpi: 160,
+  format: 5,
+  iBoxVersion: 2,
+  phoneWorkMode: 2,
+  packetMax: 49152,
+  boxName: 'nodePlay',
+  nightMode: false,
+  hand: 0,
+  mediaDelay: 300,
+  audioTransferMode: false,
+  wifiType: '5ghz',
+  micType: 'os',
+  phoneConfig: { '3': { frameInterval: 5000 }, '5': { frameInterval: null } },
+  kiosk: true,
+  camera: '',
+  microphone: '',
+  piMost: false,
+  canbus: false,
+  bindings: {
+    left: 'ArrowLeft',
+    right: 'ArrowRight',
+    selectDown: 'Space',
+    back: 'Backspace',
+    down: 'ArrowDown',
+    home: 'KeyH',
+    play: 'KeyP',
+    pause: 'KeyO',
+    next: 'KeyM',
+    prev: 'KeyN'
+  },
+  most: {},
+  canConfig: {}
+}
+/home/patrick/.config/react-carplay/config.json
+true
+config read
+(node:5399) UnhandledPromiseRejectionWarning: TypeError: electron.systemPreferences.askForMediaAccess is not a function
+    at createWindow (/tmp/.mount_CarplaOUHaZa/resources/app.asar/out/main/index.js:382:30)
+    at /tmp/.mount_CarplaOUHaZa/resources/app.asar/out/main/index.js:408:3
+(Use `react-carplay --trace-warnings ...` to show where the warning was created)
+(node:5399) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)
+[5464:1018/155347.371863:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.372335:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.372665:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.372914:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.373273:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.373630:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.373880:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.374087:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.376550:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.376884:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.377075:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.377258:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.377440:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.377727:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.378019:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155347.378310:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[5464:1018/155414.287557:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 1 times!
+[5464:1018/155417.684052:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 2 times!
+[5464:1018/155419.268228:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 3 times!
+=== 2026-10-18 15:57:47 starting: ./main.py fullscreen ===
+/home/patrick/.config/react-carplay/config.json
+true
+config read
+(node:1937) UnhandledPromiseRejectionWarning: TypeError: electron.systemPreferences.askForMediaAccess is not a function
+    at createWindow (/tmp/.mount_CarplajiWXmA/resources/app.asar/out/main/index.js:382:30)
+    at /tmp/.mount_CarplajiWXmA/resources/app.asar/out/main/index.js:408:3
+(Use `react-carplay --trace-warnings ...` to show where the warning was created)
+(node:1937) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)
+[1986:1018/160243.662837:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.663309:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.663541:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.663719:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.663899:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.664078:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.664246:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.664406:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.665906:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.666218:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.666387:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.666582:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.666762:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.666919:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.667061:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160243.667194:ERROR:gbm_wrapper.cc(253)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1986:1018/160305.954303:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 1 times!
+[1986:1018/160311.981566:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 2 times!
+Warning: ../src/intel/vulkan/anv_physical_device.c:2836: Unable to open device : No such file or directory (VK_ERROR_INCOMPATIBLE_DRIVER)
+Warning: Vulkan fullDrawIndexUint32 feature required.
+ - While initializing adapter (backend=BackendType::Vulkan)
+    at InitializeImpl (../../third_party/dawn/src/dawn/native/vulkan/PhysicalDeviceVk.cpp:170)
+    at Initialize (../../third_party/dawn/src/dawn/native/PhysicalDevice.cpp:35)
+
+Warning: eglChooseConfig returned zero configs
+    at Create (../../third_party/dawn/src/dawn/native/opengl/ContextEGL.cpp:52)
+    at Create (../../third_party/dawn/src/dawn/native/opengl/PhysicalDeviceGL.cpp:97)
+
+=== 2026-10-18 16:07:51 starting: ./main.py fullscreen ===
+pygame 2.6.1 (SDL 2.32.4, Python 3.13.5)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Traceback (most recent call last):
+  File "/home/patrick/Carviewer/main.py", line 67, in <module>
+    main()
+    ~~~~^^
+  File "/home/patrick/Carviewer/main.py", line 52, in main
+    read.read_menu()
+    ~~~~~~~~~~~~~~^^
+  File "/home/patrick/Carviewer/read.py", line 24, in read_menu
+    for event in pygame.event.get():
+                 ~~~~~~~~~~~~~~~~^^
+pygame.error: video system not initialized
+=== 2026-10-19 08:22:28 starting: ./main.py fullscreen ===
+pygame 2.6.1 (SDL 2.32.4, Python 3.13.5)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Traceback (most recent call last):
+  File "/home/patrick/Carviewer/main.py", line 72, in <module>
+    main()
+    ~~~~^^
+  File "/home/patrick/Carviewer/main.py", line 55, in main
+    setup()
+    ~~~~~^^
+  File "/home/patrick/Carviewer/main.py", line 51, in setup
+    intro.show_intro()
+    ~~~~~~~~~~~~~~~~^^
+  File "/home/patrick/Carviewer/intro.py", line 76, in show_intro
+    screen.blit(car_image, (car_x, car_y))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pygame.error: Surfaces must not be locked during blit
+=== 2026-10-19 09:11:19 starting: ./main.py fullscreen ===
+pygame 2.6.1 (SDL 2.32.4, Python 3.13.5)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Traceback (most recent call last):
+  File "/home/patrick/Carviewer/main.py", line 90, in <module>
+    main()
+    ~~~~^^
+  File "/home/patrick/Carviewer/main.py", line 75, in main
+    read.read_menu()
+    ~~~~~~~~~~~~~~^^
+  File "/home/patrick/Carviewer/read.py", line 36, in read_menu
+    misc_pressed()
+    ~~~~~~~~~~~~^^
+  File "/home/patrick/Carviewer/read.py", line 116, in misc_pressed
+    misc.misc_screen()
+    ~~~~~~~~~~~~~~~~^^
+  File "/home/patrick/Carviewer/misc.py", line 51, in misc_screen
+    screen.fill(BACKGROUND_COLOR)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+pygame.error: display Surface quit

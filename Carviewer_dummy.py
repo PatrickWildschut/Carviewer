@@ -4,7 +4,12 @@ import math
 import time
 import sys
 import random
+import os
 from infobutton import InfoButton
+
+# SDL prefers x11 through XWayland, whose fullscreen surface has a format
+# SDL_FillRects() rejects. Use the native Wayland driver by default.
+os.environ.setdefault("SDL_VIDEODRIVER", "wayland")
 
 def load_json():
     # read json

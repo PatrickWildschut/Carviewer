@@ -11,6 +11,12 @@ import serial
 import threading
 from infobutton import InfoButton
 
+# SDL defaults to the x11 driver when both DISPLAY and WAYLAND_DISPLAY are set,
+# and through XWayland its fullscreen surface ends up in a format that
+# SDL_FillRects() rejects ("Unsupported surface format" crashes). Use the
+# native Wayland driver instead, unless it is explicitly overridden.
+os.environ.setdefault("SDL_VIDEODRIVER", "wayland")
+
 # ADC/DAC share one SPI bus and are used from multiple threads
 adc_lock = threading.Lock()
 
