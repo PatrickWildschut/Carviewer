@@ -28,16 +28,60 @@ serial_speed = 0.0
 serial_rpm = 0
 
 current_gear = -1
+
+# The Arduino can re-enumerate on another port after a USB reset/power dip
+SERIAL_PORTS = ['/dev/ttyUSB0', '/dev/ttyUSB1', '/dev/ttyACM0', '/dev/ttyACM1']
+SERIAL_RETRY_DELAY = 1  # seconds between reconnect attempts
+SERIAL_STALL_TIMEOUT = 3  # seconds without a full line before reconnecting
+
+def open_serial():
+    # Keep trying until one of the ports opens
+    while True:
+        for port in SERIAL_PORTS:
+            try:
+                ser = serial.Serial(port, 115200, timeout=0.1)
+                print(f"[Serial] Connected to {port}")
+                return ser
+            except (serial.SerialException, OSError):
+                pass
+        time.sleep(SERIAL_RETRY_DELAY)
+
 def read_serial():
+    # Runs forever: reconnects whenever the port disappears or errors out,
+    # instead of letting the exception kill the thread
+    global serial_info_button
+
+    while True:
+        ser = open_serial()
+        try:
+            read_serial_lines(ser)
+        except Exception as e:
+            print(f"[Serial] Connection lost: {e}, reconnecting")
+        finally:
+            try:
+                ser.close()
+            except Exception:
+                pass
+        # Don't leave the button stuck "pressed" while disconnected
+        serial_info_button = False
+        time.sleep(SERIAL_RETRY_DELAY)
+
+def read_serial_lines(ser):
     global serial_info_button, serial_brake, serial_clutch, serial_speed, serial_rpm
 
-    ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.01)  # Update port if needed
-
     buffer = ""
+    last_line_time = time.time()
     while True:
-        if ser.in_waiting > 0:
-            byte = ser.read().decode(errors="ignore")
+        # Port still open but nothing arriving (e.g. Arduino hung): reconnect,
+        # reopening the port also resets most Arduinos via DTR
+        if time.time() - last_line_time > SERIAL_STALL_TIMEOUT:
+            raise serial.SerialException(f"no data for {SERIAL_STALL_TIMEOUT}s")
+
+        # Blocks up to the timeout instead of busy-looping
+        byte = ser.read().decode(errors="ignore")
+        if byte:
             if byte == '\n':
+                last_line_time = time.time()
                 line = buffer.strip()
                 buffer = ''
                 if line:
